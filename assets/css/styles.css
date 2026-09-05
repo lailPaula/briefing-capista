@@ -345,6 +345,15 @@ select:focus {
   animation: flowSlideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Step 0 Hero — Always vertically and horizontally centered */
+#step-section-0 {
+  min-height: calc(100vh - 12rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 /* ==========================================================================
    INTERACTIVE & EDITORIAL ANIMATIONS (Suave & Refinado)
    1. Book Page Turn Transition (Soft 3D Perspective)
@@ -424,11 +433,9 @@ select:focus {
 @keyframes titleRevealUp {
   0% {
     opacity: 0;
-    transform: translateY(18px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -444,11 +451,9 @@ select:focus {
 @keyframes subtitleFadeUp {
   0% {
     opacity: 0;
-    transform: translateY(12px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 

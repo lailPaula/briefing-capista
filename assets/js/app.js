@@ -132,7 +132,7 @@ class BriefingApp {
     const previousStep = this.state.currentStep;
     const isBack = stepNumber < previousStep;
     const isFirstLoad = previousStep === 0 && stepNumber === 0;
-    const animationClass = isFirstLoad ? 'fade-in' : (isBack ? 'page-turn-prev' : 'page-turn-next');
+    const animationClass = (stepNumber === 0 || isFirstLoad) ? 'fade-in' : (isBack ? 'page-turn-prev' : 'page-turn-next');
 
     // Hide all step sections
     for (let i = 0; i <= 8; i++) {
