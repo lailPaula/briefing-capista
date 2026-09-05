@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAPISTA — Briefing Editorial de Capas de Livros</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            wispr: {
+              cream: '#f7f4ea',
+              beige: '#dfd7be',
+              charcoal: '#141414',
+              forest: '#0e3833',
+              mint: '#d3ecd7',
+              parchment: '#eae3cb',
+              brown: '#5c3a21',
+              brownLight: '#f6eee7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- html2pdf.js for professional PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Canvas Confetti for celebratory success -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="min-h-screen bg-[#f7f4ea] text-[#141414] flex flex-col selection:bg-[#d3ecd7] selection:text-[#0e3833] relative">
+
+  <!-- Fixed Background Wallpaper with Vintage Sketches -->
+  <div class="site-bg-wallpaper" aria-hidden="true"></div>
+  <div class="site-bg-tint" aria-hidden="true"></div>
+
+  <!-- =========================================================================
+       TOP NAVIGATION BAR — Wispr Flow Floating Pill Style
+       ========================================================================= -->
+  <header class="sticky top-4 z-40 max-w-4xl mx-auto px-4 w-full">
+    <div class="nav-wispr px-5 h-14 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-2.5 cursor-pointer group" onclick="window.briefingApp.switchView('client'); window.briefingApp.goToStep(0)">
+        <div class="w-8 h-8 rounded-full bg-[#141414] flex items-center justify-center text-[#f7f4ea] font-serif font-bold text-sm shadow-sm group-hover:scale-105 transition-transform">
+          C
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-serif-title text-base sm:text-lg font-bold tracking-wide text-[#141414]">CAPISTA</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-[#0e3833]"></span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs / View Switcher -->
+      <nav class="flex items-center gap-1 bg-[#dfd7be]/45 p-1 rounded-full border border-[#dfd7be]/60 shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
+        <button id="nav-btn-client" 
+                onclick="window.briefingApp.switchView('client'); window.briefingApp.goToStep(0)"
+                class="text-xs sm:text-sm px-4 py-1.5 rounded-full transition-all bg-white text-[#141414] shadow-md shadow-[#141414]/5 font-semibold flex items-center gap-1.5 cursor-pointer">
+          <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-[#0e3833]"></i>
+          <span>Criar Briefing</span>
+        </button>
+
+        <button id="nav-btn-designer" 
+                onclick="window.briefingApp.switchView('designer')"
+                class="text-xs sm:text-sm px-4 py-1.5 rounded-full transition-all text-[#5c3a21] hover:text-[#141414] flex items-center gap-1.5 hover:bg-white/60 relative cursor-pointer font-medium">
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+          <span>Área do Designer</span>
+          <span id="nav-badge-count" class="hidden sm:inline-flex text-[10px] bg-[#0e3833]/10 text-[#0e3833] border border-[#0e3833]/20 px-1.5 py-0.2 rounded-full font-mono font-semibold">
+            Admin
+          </span>
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================= -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 pt-8 pb-14 sm:py-12 relative z-10">
+
+    <!-- =======================================================================
+         VIEW: CLIENT / AUTOR (Multi-step Briefing Flow)
+         ======================================================================= -->
+    <div id="view-client" class="space-y-6">
+
+      <!-- Draft Resume Banner (if previous unsubmitted draft exists) -->
+      <div id="draft-resume-banner" class="hidden glass-card rounded-2xl p-4 border border-[#dfd7be] bg-white flex flex-col sm:flex-row items-center justify-between gap-3 slide-up shadow-sm">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-[#d3ecd7] text-[#0e3833] flex items-center justify-center shrink-0 font-bold">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <p class="text-xs sm:text-sm font-semibold text-[#141414]">Encontramos um briefing que você começou a preencher.</p>
+            <p class="text-xs text-[#5c3a21]">Deseja continuar de onde parou?</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <button id="btn-discard-draft" 
+                  onclick="window.briefingApp.discardDraft()"
+                  class="text-xs px-3.5 py-1.5 rounded-full text-[#5c3a21] hover:text-red-600 transition hover:bg-[#dfd7be]/40 cursor-pointer">
+            Descartar
+          </button>
+          <button id="btn-resume-draft" 
+                  onclick="window.briefingApp.resumeDraft()"
+                  class="btn-flow text-xs px-4 py-1.5 rounded-full font-semibold transition shadow-sm cursor-pointer">
+            Continuar rascunho
+          </button>
+        </div>
+      </div>
+
+      <!-- Stepper Progress Header (Discreet & Elegant) -->
+      <div id="stepper-progress-wrapper" class="hidden space-y-2 mb-8">
+        <div class="flex items-center justify-between text-xs text-[#5c3a21]">
+          <span id="stepper-step-indicator" class="font-mono text-[#0e3833] font-bold tracking-wider">Etapa 1 de 7</span>
+          <span id="stepper-step-name" class="font-medium text-[#141414]">Informações do Livro</span>
+        </div>
+        <div class="w-full h-1.5 bg-[#dfd7be] rounded-full overflow-hidden">
+          <div id="stepper-progress-bar" class="h-full bg-[#141414] transition-all duration-400 ease-out" style="width: 14%;"></div>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           STEP 0: WELCOME SCREEN (Boas-vindas — Wispr Flow Hero)
+           ===================================================================== -->
+      <section id="step-section-0" class="text-center py-10 sm:py-20 space-y-8 fade-in relative">
+        
+        <div class="space-y-4 max-w-2xl mx-auto">
+          <h1 class="font-condensed text-5xl sm:text-7xl font-bold tracking-tight text-[#141414] leading-[1.06] title-animated">
+            <span class="title-line-1">Dê vida visual</span>
+            <span class="title-line-2">à capa do seu livro</span>
+          </h1>
+          <p class="text-base sm:text-lg text-[#5c3a21] leading-relaxed font-normal max-w-xl mx-auto subtitle-animated">
+            Compartilhe a visão da sua obra, suas referências e a atmosfera desejada. Um processo direto e sensível, pensado para quem valoriza a arte editorial.
+          </p>
+        </div>
+
+        <!-- Big CTA Button — Animated Wispr Flow Pill Button -->
+        <div class="pt-4">
+          <button id="btn-start-briefing" 
+                  onclick="window.briefingApp.goToStep(1)"
+                  class="btn-flow btn-start-animated px-10 py-4 rounded-full text-base font-semibold inline-flex items-center gap-3 cursor-pointer">
+            <span>COMEÇAR BRIEFING</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-[#8e7a68]">
+          Não é necessário criar conta ou login para começar.
+        </p>
+
+      </section>
+
+      <!-- =====================================================================
+           STEP 1: INFORMAÇÕES DO LIVRO
+           ===================================================================== -->
+      <section id="step-section-1" class="hidden space-y-6 fade-in">
+        
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full tag-wispr">
+            <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#0e3833]"></i>
+            <span>Etapa 1</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-normal font-serif-title text-[#141414]">
+            Informações da Obra
+          </h2>
+          <p class="text-sm sm:text-base text-[#5c3a21]">
+            Comece pelas coordenadas essenciais do seu livro.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 sm:p-9 space-y-6">
+          
+          <!-- Book Title -->
+          <div class="space-y-2">
+            <label for="input-book-title" class="block text-xs font-semibold text-[#141414] uppercase tracking-wider">
+              Título do livro <span class="text-[#0e3833]">*</span>
+            </label>
+            <input type="text" 
+                   id="input-book-title" 
+                   placeholder="Ex.: O Silêncio das Estrelas" 
+                   class="w-full bg-white border border-[#dfd7be] rounded-2xl px-4 py-3.5 text-base text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#141414] focus:ring-1 focus:ring-[#141414] transition" />
+          </div>
+
+          <!-- Subtitle (Optional) -->
+          <div class="space-y-2">
+            <label for="input-book-subtitle" class="block text-xs font-semibold text-[#141414] uppercase tracking-wider flex items-center justify-between">
+              <span>Subtítulo</span>
+              <span class="text-[11px] text-[#8e7a68] font-normal lowercase">opcional</span>
+            </label>
+            <input type="text" 
+                   id="input-book-subtitle" 
+                   placeholder="Ex.: Crônicas de um Futuro Esquecido" 
+                   class="w-full bg-white border border-[#dfd7be] rounded-2xl px-4 py-3.5 text-base text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#141414] focus:ring-1 focus:ring-[#141414] transition" />
+          </div>
+
+          <!-- Author Name -->
+          <div class="space-y-2">
+            <label for="input-author" class="block text-xs font-semibold text-[#141414] uppercase tracking-wider">
+              Nome do autor(a) <span class="text-[#0e3833]">*</span>
+            </label>
+            <input type="text" 
+                   id="input-author" 
+                   placeholder="Como deve aparecer impresso na capa" 
+                   class="w-full bg-white border border-[#dfd7be] rounded-2xl px-4 py-3.5 text-base text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#141414] focus:ring-1 focus:ring-[#141414] transition" />
+          </div>
+
+          <!-- Genre Selection -->
+          <div class="space-y-3 pt-2">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-[#141414] uppercase tracking-wider">
+                Gênero literário <span class="text-[#0e3833]">*</span>
+              </label>
+              <span id="genre-counter" class="text-xs font-mono px-3 py-0.5 rounded-full badge-flow text-[#0e3833] font-semibold hidden">
+                0 selecionados
+              </span>
+            </div>
+            <p class="text-xs text-[#5c3a21]">
+              Você pode selecionar múltiplos gêneros para definir melhor a proposta (ex.: Romance + Fantasia).
+            </p>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
+              <!-- Romance -->
+              <button type="button" data-genre-card="Romance" onclick="window.briefingApp.toggleGenre('Romance')"
+                      class="selectable-card p-3.5 rounded-2xl border border-[#dfd7be] text-left transition flex items-center justify-between group">
+                <span class="text-sm font-medium text-[#141414]">Romance</span>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </button>
+
+              <!-- Fantasia -->
+              <button type="button" data-genre-card="Fantasia" onclick="window.briefingApp.toggleGenre('Fantasia')"
+                      class="selectable-card p-3.5 rounded-2xl border border-[#dfd7be] text-left transition flex items-center justify-between group">
+                <span class="text-sm font-medium text-[#141414]">Fantasia</span>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </button>
+
+              <!-- Ficção -->
+              <button type="button" data-genre-card="Ficção" onclick="window.briefingApp.toggleGenre('Ficção')"
+                      class="selectable-card p-3.5 rounded-2xl border border-[#dfd7be] text-left transition flex items-center justify-between group">
+                <span class="text-sm font-medium text-[#141414]">Ficção</span>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </button>
+
+              <!-- Desenvolvimento pessoal -->
+              <button type="button" data-genre-card="Desenvolvimento pessoal" onclick="window.briefingApp.toggleGenre('Desenvolvimento pessoal')"
+                      class="selectable-card p-3.5 rounded-2xl border border-[#dfd7be] text-left transition flex items-center justify-between group">
+                <span class="text-sm font-medium text-[#141414]">Desenvolvimento Pessoal</span>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </button>
+
+              <!-- Negócios -->
+              <button type="button" data-genre-card="Negócios" onclick="window.briefingApp.toggleGenre('Negócios')"
+                      class="selectable-card p-3.5 rounded-2xl border border-[#dfd7be] text-left transition flex items-center justify-between group">
+                <span class="text-sm font-medium text-[#141414]">Negócios & Gestão</span>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </button>
+
+              <!-- Religioso -->
+              <button type="button" data-genre-card="Religioso" onclick="window.briefingApp.toggleGenre('Religioso')"
+                      class="selectable-card p-3.5 rounded-2xl border border-[#dfd7be] text-left transition flex items-center justify-between group">
+                <span class="text-sm font-medium text-[#141414]">Espiritualidade & Fé</span>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </button>
+
+              <!-- Biografia -->
+              <button type="button" data-genre-card="Biografia" onclick="window.briefingApp.toggleGenre('Biografia')"
+                      class="selectable-card p-3.5 rounded-2xl border border-[#dfd7be] text-left transition flex items-center justify-between group">
+                <span class="text-sm font-medium text-[#141414]">Biografia & Memórias</span>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </button>
+
+              <!-- Infantil -->
+              <button type="button" data-genre-card="Infantil" onclick="window.briefingApp.toggleGenre('Infantil')"
+                      class="selectable-card p-3.5 rounded-2xl border border-[#dfd7be] text-left transition flex items-center justify-between group">
+                <span class="text-sm font-medium text-[#141414]">Infantojuvenil</span>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </button>
+
+              <!-- Outro -->
+              <button type="button" data-genre-card="Outro" onclick="window.briefingApp.toggleGenre('Outro')"
+                      class="selectable-card p-3.5 rounded-2xl border border-[#dfd7be] text-left transition flex items-center justify-between group">
+                <span class="text-sm font-medium text-[#141414]">Outro Gênero</span>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </button>
+            </div>
+
+            <!-- Other genre text input -->
+            <div id="genre-other-wrapper" class="hidden mt-3 slide-up">
+              <input type="text" 
+                     id="input-genre-other" 
+                     placeholder="Qual é o gênero do livro?" 
+                     class="w-full bg-white border border-[#dfd7be] rounded-2xl px-4 py-3 text-sm text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#141414] focus:ring-1 focus:ring-[#141414]" />
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between pt-4">
+          <button type="button" onclick="window.briefingApp.prevStep()" 
+                  class="btn-flow-secondary px-6 py-3 text-sm font-medium flex items-center gap-2 cursor-pointer">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Voltar</span>
+          </button>
+
+          <button type="button" onclick="window.briefingApp.nextStep()" 
+                  class="btn-flow px-8 py-3 text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-md">
+            <span>Continuar</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
+           STEP 2: O QUE VOCÊ IMAGINA PARA A CAPA?
+           ===================================================================== -->
+      <section id="step-section-2" class="hidden space-y-6 fade-in">
+        
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full tag-wispr">
+            <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-[#0e3833]"></i>
+            <span>Etapa 2</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-normal font-serif-title text-[#141414]">
+            Como você imagina a capa do seu livro?
+          </h2>
+          <p class="text-sm sm:text-base text-[#5c3a21]">
+            Explique sua ideia livremente, com suas próprias palavras. Não precisa se preocupar com termos técnicos.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 sm:p-9 space-y-6">
+          
+          <div class="space-y-2">
+            <textarea id="textarea-idea" 
+                      rows="5"
+                      placeholder="Descreva aqui o clima, os elementos visuais ou a sensação que você quer transmitir com a capa..." 
+                      class="w-full bg-white border border-[#dfd7be] rounded-2xl p-4 text-base text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#141414] focus:ring-1 focus:ring-[#141414] transition leading-relaxed"></textarea>
+          </div>
+
+          <!-- Clickable Examples / Inspirations -->
+          <div class="space-y-2.5 pt-2 border-t border-[#dfd7be]">
+            <span class="text-xs font-semibold text-[#5c3a21] uppercase tracking-wider">
+              Exemplos de como descrever (clique para se inspirar):
+            </span>
+
+            <div class="space-y-2">
+              <div onclick="window.briefingApp.applyIdeaInspiration('Quero uma capa elegante, escura e misteriosa, com uma mulher em destaque.')"
+                   class="p-3.5 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] hover:bg-[#eae3cb] text-xs sm:text-sm text-[#141414] cursor-pointer flex items-start gap-3 transition">
+                <i data-lucide="sparkles" class="w-4 h-4 text-[#0e3833] shrink-0 mt-0.5"></i>
+                <span>"Quero uma capa elegante, escura e misteriosa, com uma mulher em destaque."</span>
+              </div>
+
+              <div onclick="window.briefingApp.applyIdeaInspiration('Quero algo minimalista, sofisticado e com bastante espaço vazio.')"
+                   class="p-3.5 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] hover:bg-[#eae3cb] text-xs sm:text-sm text-[#141414] cursor-pointer flex items-start gap-3 transition">
+                <i data-lucide="sparkles" class="w-4 h-4 text-[#0e3833] shrink-0 mt-0.5"></i>
+                <span>"Quero algo minimalista, sofisticado e com bastante espaço vazio."</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between pt-4">
+          <button type="button" onclick="window.briefingApp.prevStep()" 
+                  class="btn-flow-secondary px-6 py-3 text-sm font-medium flex items-center gap-2 cursor-pointer">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Voltar</span>
+          </button>
+
+          <button type="button" onclick="window.briefingApp.nextStep()" 
+                  class="btn-flow px-8 py-3 text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-md">
+            <span>Continuar</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
+           STEP 3: REFERÊNCIA VISUAL (ÁREA GRANDE E MUITO VISÍVEL)
+           ===================================================================== -->
+      <section id="step-section-3" class="hidden space-y-6 fade-in">
+        
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full badge-flow text-xs text-[#0e3833]">
+            <i data-lucide="image" class="w-3.5 h-3.5 text-[#0e3833]"></i>
+            <span>Referência Visual</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-normal font-serif-title text-[#141414]">
+            Referências e Inspirações Visuais
+          </h2>
+          <p class="text-sm sm:text-base text-[#5c3a21] leading-relaxed font-normal">
+            Pode ser uma capa existente, fotografia artística, pintura ou ilustração conceitual. As imagens servem para guiar a sensibilidade estética e a paleta do projeto.
+          </p>
+        </div>
+
+        <div class="flow-card rounded-3xl p-6 sm:p-9 border border-[#dfd7be] space-y-6 bg-white shadow-sm">
+          
+          <!-- Dropzone Container -->
+          <div id="references-dropzone" 
+               class="dropzone border-2 border-dashed border-[#dfd7be] hover:border-[#0e3833] rounded-3xl p-8 sm:p-12 text-center cursor-pointer transition-all bg-[#fbf9f2] hover:bg-[#f2ece0] group">
+            
+            <input type="file" id="input-file-references" multiple accept="image/jpeg,image/png,image/webp" class="hidden" />
+
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[#d3ecd7] text-[#0e3833] flex items-center justify-center border border-[#0e3833]/20 group-hover:scale-105 transition-transform shadow-sm">
+              <i data-lucide="upload-cloud" class="w-8 h-8"></i>
+            </div>
+
+            <h4 class="text-base sm:text-lg font-semibold text-[#141414] mb-1">
+              Arraste e solte imagens aqui, ou <span class="text-[#0e3833] underline underline-offset-4">clique para selecionar</span>
+            </h4>
+            <p class="text-xs sm:text-sm text-[#5c3a21] mb-3">
+              Você também pode colar direto com <kbd class="bg-[#f7f4ea] px-2 py-0.5 rounded text-[11px] font-mono border border-[#dfd7be] text-[#141414]">Ctrl+V</kbd> ou <kbd class="bg-[#f7f4ea] px-2 py-0.5 rounded text-[11px] font-mono border border-[#dfd7be] text-[#141414]">Cmd+V</kbd>
+            </p>
+            <p class="text-xs text-[#8e7a68]">
+              Formatos aceitos: JPG, PNG, WEBP • Até 3 imagens de referência
+            </p>
+          </div>
+
+          <!-- Thumbnails Preview Grid -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-[#5c3a21]">Imagens enviadas:</span>
+              <span id="images-count-badge" class="text-xs px-3 py-1 rounded-full badge-flow text-[#0e3833] font-medium">
+                0 de 3 imagens
+              </span>
+            </div>
+
+            <div id="images-preview-grid" class="grid grid-cols-3 gap-3 sm:gap-4">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between pt-4">
+          <button type="button" onclick="window.briefingApp.prevStep()" 
+                  class="btn-flow-secondary px-6 py-3 text-sm font-medium flex items-center gap-2 cursor-pointer">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Voltar</span>
+          </button>
+
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="window.briefingApp.nextStep()" 
+                    class="text-xs text-[#5c3a21] hover:text-[#0e3833] transition underline underline-offset-4 hidden sm:block">
+              Não tenho imagens agora, continuar
+            </button>
+            <button type="button" onclick="window.briefingApp.nextStep()" 
+                    class="btn-flow px-8 py-3 text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-md">
+              <span>Continuar</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
+           STEP 4: ESTILO VISUAL
+           ===================================================================== -->
+      <section id="step-section-4" class="hidden space-y-6 fade-in">
+        
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h2 class="text-2xl sm:text-4xl font-normal font-serif-title text-[#141414]">
+              Qual estética visual ressoa com a sua obra?
+            </h2>
+            <span id="styles-counter" class="text-xs font-mono px-3 py-1 rounded-full badge-flow text-[#0e3833] font-semibold">
+              0/3 selecionados
+            </span>
+          </div>
+          <p class="text-sm text-[#5c3a21]">
+            Selecione até 3 atmosferas predominantes para orientar a direção de arte da capa.
+          </p>
+        </div>
+
+        <div class="flow-card rounded-3xl p-6 sm:p-9 border border-[#dfd7be] space-y-6 bg-white shadow-sm">
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+            
+            <!-- Elegante -->
+            <button type="button" data-style-card="Elegante" onclick="window.briefingApp.toggleStyle('Elegante')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Elegante</span>
+                <span class="text-xs text-[#5c3a21]">Refinado, sóbrio e clássico</span>
+              </div>
+            </button>
+
+            <!-- Minimalista -->
+            <button type="button" data-style-card="Minimalista" onclick="window.briefingApp.toggleStyle('Minimalista')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="minimize-2" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Minimalista</span>
+                <span class="text-xs text-[#5c3a21]">Espaço limpo e essencial</span>
+              </div>
+            </button>
+
+            <!-- Moderno -->
+            <button type="button" data-style-card="Moderno" onclick="window.briefingApp.toggleStyle('Moderno')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="zap" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Moderno</span>
+                <span class="text-xs text-[#5c3a21]">Contemporâneo e dinâmico</span>
+              </div>
+            </button>
+
+            <!-- Dramático -->
+            <button type="button" data-style-card="Dramático" onclick="window.briefingApp.toggleStyle('Dramático')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="flame" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Dramático</span>
+                <span class="text-xs text-[#5c3a21]">Alto contraste e intensidade</span>
+              </div>
+            </button>
+
+            <!-- Misterioso -->
+            <button type="button" data-style-card="Misterioso" onclick="window.briefingApp.toggleStyle('Misterioso')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="moon" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Misterioso</span>
+                <span class="text-xs text-[#5c3a21]">Sombras, enigma e suspense</span>
+              </div>
+            </button>
+
+            <!-- Romântico -->
+            <button type="button" data-style-card="Romântico" onclick="window.briefingApp.toggleStyle('Romântico')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="heart" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Romântico</span>
+                <span class="text-xs text-[#5c3a21]">Sensível, poético e emocional</span>
+              </div>
+            </button>
+
+            <!-- Luxuoso -->
+            <button type="button" data-style-card="Luxuoso" onclick="window.briefingApp.toggleStyle('Luxuoso')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="crown" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Luxuoso</span>
+                <span class="text-xs text-[#5c3a21]">Nobre, sofisticado e imponente</span>
+              </div>
+            </button>
+
+            <!-- Criativo -->
+            <button type="button" data-style-card="Criativo" onclick="window.briefingApp.toggleStyle('Criativo')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="palette" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Conceitual</span>
+                <span class="text-xs text-[#5c3a21]">Autoral e fora do convencional</span>
+              </div>
+            </button>
+
+            <!-- Ilustrado -->
+            <button type="button" data-style-card="Ilustrado" onclick="window.briefingApp.toggleStyle('Ilustrado')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Ilustrado</span>
+                <span class="text-xs text-[#5c3a21]">Traço artístico e autoral</span>
+              </div>
+            </button>
+
+            <!-- Outro -->
+            <button type="button" data-style-card="Outro" onclick="window.briefingApp.toggleStyle('Outro')"
+                    class="selectable-card bg-white p-4 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex flex-col justify-between h-28 group shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-full bg-[#fbf9f2] border border-[#dfd7be] flex items-center justify-center text-[#0e3833] group-hover:border-[#0e3833] transition">
+                  <i data-lucide="compass" class="w-4 h-4"></i>
+                </div>
+                <span class="check-indicator opacity-0 transition text-[#0e3833]"><i data-lucide="check" class="w-4 h-4"></i></span>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block">Outro Estilo</span>
+                <span class="text-xs text-[#5c3a21]">Especificar estética própria</span>
+              </div>
+            </button>
+
+          </div>
+
+          <!-- Other style text input -->
+          <div id="style-other-wrapper" class="hidden slide-up">
+            <input type="text" 
+                   id="input-style-other" 
+                   placeholder="Descreva o estilo que você tem em mente..." 
+                   class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-2xl px-4 py-3 text-sm text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] focus:ring-1 focus:ring-[#0e3833] transition" />
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between pt-4">
+          <button type="button" onclick="window.briefingApp.prevStep()" 
+                  class="btn-flow-secondary px-6 py-3 text-sm font-medium flex items-center gap-2 cursor-pointer">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Voltar</span>
+          </button>
+
+          <button type="button" onclick="window.briefingApp.nextStep()" 
+                  class="btn-flow px-8 py-3 text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-md">
+            <span>Continuar</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
+           STEP 5: PREFERÊNCIA DE CORES
+           ===================================================================== -->
+      <section id="step-section-5" class="hidden space-y-6 fade-in">
+        
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h2 class="text-2xl sm:text-4xl font-normal font-serif-title text-[#141414]">
+              Cores e Harmonia Cromática
+            </h2>
+            <span id="colors-counter" class="text-xs font-mono px-3 py-1 rounded-full badge-flow text-[#0e3833] font-semibold">
+              0/3 cores selecionadas
+            </span>
+          </div>
+          <p class="text-sm text-[#5c3a21]">
+            Selecione até 3 tons para guiar o clima visual, ou confie na direção de arte da capista.
+          </p>
+        </div>
+
+        <div class="flow-card rounded-3xl p-6 sm:p-9 border border-[#dfd7be] space-y-6 bg-white shadow-sm">
+          
+          <!-- Option: "Pode decidir por mim" (Highlighted) -->
+          <button type="button" id="card-color-decide" onclick="window.briefingApp.setColorsMode('decide_for_me')"
+                  class="selectable-card w-full bg-gradient-to-r from-[#d3ecd7]/25 to-white p-4 sm:p-5 rounded-2xl border border-[#dfd7be] text-left hover:border-[#0e3833] transition flex items-center justify-between group shadow-sm">
+            <div class="flex items-center gap-3.5">
+              <div class="w-10 h-10 rounded-full bg-[#d3ecd7] text-[#0e3833] flex items-center justify-center border border-[#0e3833]/20 group-hover:scale-105 transition-transform shadow-sm">
+                <i data-lucide="wand-2" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <span class="text-base font-semibold text-[#141414] block group-hover:text-[#0e3833] transition-colors">
+                  Pode decidir por mim
+                </span>
+                <span class="text-xs text-[#5c3a21]">
+                  O designer irá escolher a harmonia cromática ideal para o gênero e tema.
+                </span>
+              </div>
+            </div>
+            <span class="check-indicator opacity-0 transition text-[#0e3833] shrink-0"><i data-lucide="check" class="w-5 h-5"></i></span>
+          </button>
+
+          <!-- Divider -->
+          <div class="relative flex py-2 items-center">
+            <div class="flex-grow border-t border-[#dfd7be]"></div>
+            <span class="flex-shrink mx-4 text-xs uppercase tracking-wider text-[#8e7a68]">Ou selecione até 3 tons</span>
+            <div class="flex-grow border-t border-[#dfd7be]"></div>
+          </div>
+
+          <!-- Color Swatches Grid -->
+          <div id="colors-palette-section" class="space-y-4">
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              
+              <!-- Preto Profundo -->
+              <button type="button" data-color-hex="#111827" onclick="window.briefingApp.toggleColor('#111827')"
+                      class="p-3 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 shadow-sm hover:shadow">
+                <span class="w-6 h-6 rounded-full bg-gray-900 border border-black/10 shrink-0 shadow-sm"></span>
+                <div class="text-xs font-medium text-[#141414]">Preto Profundo</div>
+              </button>
+
+              <!-- Dourado / Ouro -->
+              <button type="button" data-color-hex="#c99e52" onclick="window.briefingApp.toggleColor('#c99e52')"
+                      class="p-3 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 shadow-sm hover:shadow">
+                <span class="w-6 h-6 rounded-full bg-[#c99e52] border border-black/10 shrink-0 shadow-sm"></span>
+                <div class="text-xs font-medium text-[#141414]">Dourado</div>
+              </button>
+
+              <!-- Azul Noite -->
+              <button type="button" data-color-hex="#1e293b" onclick="window.briefingApp.toggleColor('#1e293b')"
+                      class="p-3 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 shadow-sm hover:shadow">
+                <span class="w-6 h-6 rounded-full bg-[#1e293b] border border-black/10 shrink-0 shadow-sm"></span>
+                <div class="text-xs font-medium text-[#141414]">Azul Noite</div>
+              </button>
+
+              <!-- Branco Puro -->
+              <button type="button" data-color-hex="#f8fafc" onclick="window.briefingApp.toggleColor('#f8fafc')"
+                      class="p-3 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 shadow-sm hover:shadow">
+                <span class="w-6 h-6 rounded-full bg-[#f8fafc] border border-black/20 shrink-0 shadow-sm"></span>
+                <div class="text-xs font-medium text-[#141414]">Branco Puro</div>
+              </button>
+
+              <!-- Vermelho Vinho -->
+              <button type="button" data-color-hex="#881337" onclick="window.briefingApp.toggleColor('#881337')"
+                      class="p-3 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 shadow-sm hover:shadow">
+                <span class="w-6 h-6 rounded-full bg-[#881337] border border-black/10 shrink-0 shadow-sm"></span>
+                <div class="text-xs font-medium text-[#141414]">Vinho Carmim</div>
+              </button>
+
+              <!-- Tons Terrosos -->
+              <button type="button" data-color-hex="#78350f" onclick="window.briefingApp.toggleColor('#78350f')"
+                      class="p-3 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 shadow-sm hover:shadow">
+                <span class="w-6 h-6 rounded-full bg-[#78350f] border border-black/10 shrink-0 shadow-sm"></span>
+                <div class="text-xs font-medium text-[#141414]">Tons Terrosos</div>
+              </button>
+
+              <!-- Verde Esmeralda -->
+              <button type="button" data-color-hex="#064e3b" onclick="window.briefingApp.toggleColor('#064e3b')"
+                      class="p-3 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 shadow-sm hover:shadow">
+                <span class="w-6 h-6 rounded-full bg-[#064e3b] border border-black/10 shrink-0 shadow-sm"></span>
+                <div class="text-xs font-medium text-[#141414]">Verde Floresta</div>
+              </button>
+
+              <!-- Tons Pastéis -->
+              <button type="button" data-color-hex="#fbcfe8" onclick="window.briefingApp.toggleColor('#fbcfe8')"
+                      class="p-3 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 shadow-sm hover:shadow">
+                <span class="w-6 h-6 rounded-full bg-[#fbcfe8] border border-black/10 shrink-0 shadow-sm"></span>
+                <div class="text-xs font-medium text-[#141414]">Tons Pastéis</div>
+              </button>
+
+              <!-- Roxo Místico -->
+              <button type="button" data-color-hex="#581c87" onclick="window.briefingApp.toggleColor('#581c87')"
+                      class="p-3 rounded-2xl border border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 shadow-sm hover:shadow">
+                <span class="w-6 h-6 rounded-full bg-[#581c87] border border-black/10 shrink-0 shadow-sm"></span>
+                <div class="text-xs font-medium text-[#141414]">Roxo Místico</div>
+              </button>
+
+              <!-- Custom Color Picker -->
+              <label class="p-3 rounded-2xl border border-dashed border-[#dfd7be] bg-[#fbf9f2] text-left hover:border-[#0e3833] transition flex items-center gap-3 cursor-pointer shadow-sm hover:shadow">
+                <input type="color" id="input-custom-color" value="#0e3833" class="w-6 h-6 rounded-full cursor-pointer bg-transparent border-0" />
+                <div class="text-xs font-medium text-[#141414]">Outra Cor...</div>
+              </label>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between pt-4">
+          <button type="button" onclick="window.briefingApp.prevStep()" 
+                  class="btn-flow-secondary px-6 py-3 text-sm font-medium flex items-center gap-2 cursor-pointer">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Voltar</span>
+          </button>
+
+          <button type="button" onclick="window.briefingApp.nextStep()" 
+                  class="btn-flow px-8 py-3 text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-md">
+            <span>Continuar</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
+           STEP 6: O QUE NÃO PODE FALTAR?
+           ===================================================================== -->
+      <section id="step-section-6" class="hidden space-y-6 fade-in">
+        
+        <div class="space-y-2">
+          <h2 class="text-2xl sm:text-4xl font-normal font-serif-title text-[#141414]">
+            Elementos Marcantes e Detalhes Específicos
+          </h2>
+          <p class="text-sm text-[#5c3a21]">
+            Indique se há algum personagem, objeto, símbolo ou detalhe essencial para a narrativa.
+          </p>
+        </div>
+
+        <div class="flow-card rounded-3xl p-6 sm:p-9 border border-[#dfd7be] space-y-6 bg-white shadow-sm">
+          
+          <!-- Input field -->
+          <div class="space-y-2">
+            <input type="text" 
+                   id="input-indispensable" 
+                   placeholder="Ex.: Uma mulher de costas olhando para o horizonte..." 
+                   class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-2xl px-4 py-3.5 text-base text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] focus:ring-1 focus:ring-[#0e3833] transition" />
+          </div>
+
+          <!-- Clickable Examples -->
+          <div class="space-y-2.5 pt-1">
+            <span class="text-xs font-semibold text-[#5c3a21] uppercase tracking-wider">
+              Exemplos comuns (clique para aplicar):
+            </span>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" onclick="window.briefingApp.applyIndispensablePreset('Quero que apareça uma rosa vermelha.')"
+                      class="text-xs px-3.5 py-1.5 rounded-full badge-flow text-[#141414] hover:border-[#0e3833] hover:text-[#0e3833] transition cursor-pointer">
+                "Quero que apareça uma rosa vermelha."
+              </button>
+              <button type="button" onclick="window.briefingApp.applyIndispensablePreset('Preciso que tenha uma mulher.')"
+                      class="text-xs px-3.5 py-1.5 rounded-full badge-flow text-[#141414] hover:border-[#0e3833] hover:text-[#0e3833] transition cursor-pointer">
+                "Preciso que tenha uma mulher."
+              </button>
+              <button type="button" onclick="window.briefingApp.applyIndispensablePreset('Quero um símbolo relacionado ao universo.')"
+                      class="text-xs px-3.5 py-1.5 rounded-full badge-flow text-[#141414] hover:border-[#0e3833] hover:text-[#0e3833] transition cursor-pointer">
+                "Quero um símbolo relacionado ao universo."
+              </button>
+            </div>
+          </div>
+
+          <!-- Checkbox: Não tenho preferência -->
+          <div class="pt-4 border-t border-[#dfd7be]">
+            <label class="flex items-center gap-3 cursor-pointer select-none group">
+              <input type="checkbox" 
+                     id="checkbox-indispensable-none" 
+                     onchange="window.briefingApp.toggleIndispensableNone(this)"
+                     class="w-5 h-5 rounded-lg bg-[#fbf9f2] border-[#dfd7be] text-[#0e3833] focus:ring-[#0e3833] focus:ring-offset-[#f7f4ea]" />
+              <div>
+                <span class="text-sm font-medium text-[#141414] group-hover:text-[#0e3833] transition-colors">
+                  Não tenho preferência
+                </span>
+                <span class="text-xs text-[#5c3a21] block">
+                  O designer tem total liberdade criativa para compor os elementos da capa.
+                </span>
+              </div>
+            </label>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex items-center justify-between pt-4">
+          <button type="button" onclick="window.briefingApp.prevStep()" 
+                  class="btn-flow-secondary px-6 py-3 text-sm font-medium flex items-center gap-2 cursor-pointer">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Voltar</span>
+          </button>
+
+          <button type="button" onclick="window.briefingApp.nextStep()" 
+                  class="btn-flow px-8 py-3 text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-md">
+            <span>Revisar Briefing</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
+           STEP 7: ETAPA FINAL — RESUMO & ENVIO ("Confira seu briefing")
+           ===================================================================== -->
+      <section id="step-section-7" class="hidden space-y-6 fade-in">
+        
+        <div class="space-y-2 text-center max-w-xl mx-auto">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full badge-flow text-xs text-[#0e3833]">
+            <i data-lucide="clipboard-check" class="w-3.5 h-3.5 text-[#0e3833]"></i>
+            <span>Quase pronto</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-normal font-serif-title text-[#141414]">
+            Revisão do Briefing Editorial
+          </h2>
+          <p class="text-sm sm:text-base text-[#5c3a21] leading-relaxed font-normal">
+            Revise todas as orientações antes do envio. Você pode ajustar qualquer detalhe a qualquer momento.
+          </p>
+        </div>
+
+        <div class="flow-card rounded-3xl p-6 sm:p-9 border border-[#dfd7be] space-y-6 bg-white shadow-sm">
+          
+          <!-- Summary Block 1: Livro -->
+          <div class="p-5 rounded-2xl bg-[#fbf9f2] border border-[#dfd7be] space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs uppercase tracking-wider text-[#0e3833] font-semibold flex items-center gap-1.5">
+                <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+                Informações do Livro
+              </span>
+              <button type="button" onclick="window.briefingApp.goToStep(1)" class="text-xs text-[#5c3a21] hover:text-[#0e3833] transition flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#dfd7be] hover:border-[#0e3833] bg-white cursor-pointer shadow-sm">
+                <i data-lucide="edit-3" class="w-3 h-3"></i> Editar
+              </button>
+            </div>
+
+            <div class="pt-1">
+              <h3 id="summary-book-title" class="text-xl sm:text-2xl font-normal font-serif-title text-[#141414]"></h3>
+              <p id="summary-book-subtitle" class="text-sm text-[#5c3a21] italic"></p>
+              <div class="flex items-center gap-2 text-xs text-[#5c3a21] mt-2">
+                <span>Por <strong id="summary-author" class="text-[#141414] font-medium"></strong></span>
+                <span class="text-[#dfd7be]">•</span>
+                <span id="summary-genre" class="badge-flow text-[#0e3833] px-2.5 py-0.5 rounded-full text-[11px] font-medium"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Block 2: Ideia Principal -->
+          <div class="p-5 rounded-2xl bg-[#fbf9f2] border border-[#dfd7be] space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs uppercase tracking-wider text-[#0e3833] font-semibold flex items-center gap-1.5">
+                <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i>
+                Ideia Principal
+              </span>
+              <button type="button" onclick="window.briefingApp.goToStep(2)" class="text-xs text-[#5c3a21] hover:text-[#0e3833] transition flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#dfd7be] hover:border-[#0e3833] bg-white cursor-pointer shadow-sm">
+                <i data-lucide="edit-3" class="w-3 h-3"></i> Editar
+              </button>
+            </div>
+            <p id="summary-idea" class="text-sm text-[#141414] leading-relaxed italic border-l-2 border-[#0e3833] pl-3.5"></p>
+          </div>
+
+          <!-- Summary Block 3: Referências Visuais -->
+          <div class="p-5 rounded-2xl bg-[#fbf9f2] border border-[#dfd7be] space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs uppercase tracking-wider text-[#0e3833] font-semibold flex items-center gap-1.5">
+                <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                Imagens de Referência
+              </span>
+              <button type="button" onclick="window.briefingApp.goToStep(3)" class="text-xs text-[#5c3a21] hover:text-[#0e3833] transition flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#dfd7be] hover:border-[#0e3833] bg-white cursor-pointer shadow-sm">
+                <i data-lucide="edit-3" class="w-3 h-3"></i> Editar
+              </button>
+            </div>
+            <div id="summary-images-grid" class="grid grid-cols-3 gap-3 sm:gap-4"></div>
+          </div>
+
+          <!-- Summary Block 4: Estilo & Cores (2 columns) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Estilo -->
+            <div class="p-5 rounded-2xl bg-[#fbf9f2] border border-[#dfd7be] space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs uppercase tracking-wider text-[#0e3833] font-semibold flex items-center gap-1.5">
+                  <i data-lucide="palette" class="w-3.5 h-3.5"></i> Estilo Escolhido
+                </span>
+                <button type="button" onclick="window.briefingApp.goToStep(4)" class="text-xs text-[#5c3a21] hover:text-[#0e3833] transition flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#dfd7be] hover:border-[#0e3833] bg-white cursor-pointer shadow-sm">
+                  <i data-lucide="edit-3" class="w-3 h-3"></i> Editar
+                </button>
+              </div>
+              <div id="summary-styles-list" class="flex flex-wrap gap-1.5 pt-1"></div>
+            </div>
+
+            <!-- Cores -->
+            <div class="p-5 rounded-2xl bg-[#fbf9f2] border border-[#dfd7be] space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs uppercase tracking-wider text-[#0e3833] font-semibold flex items-center gap-1.5">
+                  <i data-lucide="droplet" class="w-3.5 h-3.5"></i> Cores
+                </span>
+                <button type="button" onclick="window.briefingApp.goToStep(5)" class="text-xs text-[#5c3a21] hover:text-[#0e3833] transition flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#dfd7be] hover:border-[#0e3833] bg-white cursor-pointer shadow-sm">
+                  <i data-lucide="edit-3" class="w-3 h-3"></i> Editar
+                </button>
+              </div>
+              <div id="summary-colors-list" class="flex flex-wrap gap-2 pt-1"></div>
+            </div>
+          </div>
+
+          <!-- Summary Block 5: Elemento Indispensável -->
+          <div class="p-5 rounded-2xl bg-[#fbf9f2] border border-[#dfd7be] space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs uppercase tracking-wider text-[#0e3833] font-semibold flex items-center gap-1.5">
+                <i data-lucide="star" class="w-3.5 h-3.5"></i>
+                Elemento Indispensável
+              </span>
+              <button type="button" onclick="window.briefingApp.goToStep(6)" class="text-xs text-[#5c3a21] hover:text-[#0e3833] transition flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#dfd7be] hover:border-[#0e3833] bg-white cursor-pointer shadow-sm">
+                <i data-lucide="edit-3" class="w-3 h-3"></i> Editar
+              </button>
+            </div>
+            <p id="summary-indispensable" class="text-sm text-[#141414]"></p>
+          </div>
+
+          <!-- Optional Contacts for the designer to reply -->
+          <div class="p-5 rounded-2xl bg-[#f4f4dc] border border-[#dfd7be] space-y-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="message-square" class="w-4 h-4 text-[#0e3833]"></i>
+              <span class="text-xs font-semibold text-[#141414] uppercase tracking-wider">
+                Como o designer pode entrar em contato com você? (Opcional)
+              </span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input type="text" id="input-contact-whatsapp" placeholder="WhatsApp: (XX) 9XXXX-XXXX" 
+                     class="bg-white border border-[#dfd7be] rounded-xl px-4 py-2.5 text-xs text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] transition" />
+              <input type="email" id="input-contact-email" placeholder="Seu E-mail principal" 
+                     class="bg-white border border-[#dfd7be] rounded-xl px-4 py-2.5 text-xs text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] transition" />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Big Submit Button -->
+        <div class="space-y-3 pt-2 text-center">
+          <button type="button" id="btn-submit-briefing" 
+                  onclick="window.briefingApp.submitBriefing()"
+                  class="btn-flow w-full sm:w-auto px-12 py-4 text-base sm:text-lg font-semibold inline-flex items-center justify-center gap-3 transition-transform hover:scale-[1.02] shadow-xl cursor-pointer">
+            <span>ENVIAR BRIEFING</span>
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+          <p class="text-xs text-[#5c3a21]">
+            Ao enviar, o designer receberá o briefing completo com as referências visuais.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
+           STEP 8: TELA DE SUCESSO ✨
+           ===================================================================== -->
+      <section id="step-section-8" class="hidden text-center py-8 sm:py-14 space-y-6 fade-in">
+        
+        <div class="w-20 h-20 mx-auto rounded-3xl bg-[#0e3833] text-[#f7f4ea] flex items-center justify-center shadow-xl shadow-[#0e3833]/20">
+          <i data-lucide="sparkles" class="w-10 h-10"></i>
+        </div>
+
+        <div class="space-y-3 max-w-md mx-auto">
+          <h2 class="text-3xl sm:text-4xl font-normal font-serif-title text-[#141414]">
+            Briefing Enviado com Sucesso
+          </h2>
+          <p class="text-base text-[#5c3a21] leading-relaxed font-light">
+            As diretrizes da sua obra foram registradas. Em breve nossa equipe dará início à direção de arte da sua capa.
+          </p>
+          <div class="inline-block px-4 py-1.5 rounded-full badge-flow text-[#0e3833] font-mono text-xs font-semibold">
+            Protocolo: <span id="success-briefing-id">#CAPA-XXXX</span>
+          </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="max-w-md mx-auto space-y-3 pt-4">
+          
+          <button type="button" id="btn-success-download-pdf" 
+                  onclick="window.briefingApp.downloadSuccessPDF()"
+                  class="w-full btn-flow-secondary p-3.5 text-sm font-semibold flex items-center justify-center gap-2 transition cursor-pointer">
+            <i data-lucide="file-down" class="w-4 h-4 text-[#0e3833]"></i>
+            <span>Baixar cópia do Briefing em PDF</span>
+          </button>
+
+          <button type="button" id="btn-success-whatsapp" 
+                  onclick="window.briefingApp.shareViaWhatsApp()"
+                  class="w-full btn-flow p-3.5 text-sm font-semibold flex items-center justify-center gap-2 transition shadow-md cursor-pointer">
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            <span>Avisar o Designer no WhatsApp</span>
+          </button>
+
+          <button type="button" id="btn-success-new" 
+                  onclick="window.briefingApp.startNewBriefing()"
+                  class="w-full p-2.5 text-xs text-[#5c3a21] hover:text-[#0e3833] transition cursor-pointer rounded-full">
+            Criar outro briefing
+          </button>
+
+        </div>
+
+      </section>
+
+    </div><!-- /#view-client -->
+
+    <!-- =======================================================================
+         VIEW: DESIGNER (Admin Dashboard)
+         ======================================================================= -->
+    <div id="view-designer" class="hidden space-y-6 fade-in">
+      
+      <!-- Designer Header & Metrics -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#dfd7be] pb-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-flow text-xs text-[#0e3833] mb-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#0e3833]"></span>
+            <span class="uppercase tracking-widest text-[11px] font-semibold text-[#0e3833]">Painel de Gestão</span>
+            <span class="text-[#dfd7be]">•</span>
+            <span class="text-[#5c3a21]">Capista Studio</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-normal font-serif-title text-[#141414]">Ateliê Editorial — Projetos & Briefings</h2>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div id="designer-user-badge" class="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full badge-flow text-xs">
+            <span class="w-2 h-2 rounded-full bg-[#0e3833] animate-pulse"></span>
+            <span id="designer-user-email" class="text-[#141414] font-medium">lailapauladesigner@gmail.com</span>
+          </div>
+
+          <button onclick="window.authService.logout()" 
+                  title="Sair do painel do designer"
+                  class="btn-flow-secondary text-xs px-4 py-2 flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span>Sair</span>
+          </button>
+
+          <button onclick="window.briefingApp.switchView('client'); window.briefingApp.goToStep(0)" 
+                  class="btn-flow text-xs px-5 py-2 font-semibold flex items-center gap-1.5 cursor-pointer shadow-md">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Novo Briefing</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Bento Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div class="flow-card bg-white p-5 rounded-2xl border border-[#dfd7be] shadow-sm relative overflow-hidden group">
+          <span class="text-xs text-[#5c3a21] font-medium block">Total Recebidos</span>
+          <span id="metric-total" class="text-3xl font-semibold text-[#141414] font-mono mt-2 block tracking-tight">0</span>
+        </div>
+        <div class="flow-card bg-[#f0faf7] p-5 rounded-2xl border border-[#0e3833]/20 shadow-sm relative overflow-hidden group">
+          <span class="text-xs text-[#0e3833] font-medium block">Novos</span>
+          <span id="metric-novos" class="text-3xl font-semibold text-[#0e3833] font-mono mt-2 block tracking-tight">0</span>
+        </div>
+        <div class="flow-card bg-[#eef8f3] p-5 rounded-2xl border border-[#0e3833]/20 shadow-sm relative overflow-hidden group">
+          <span class="text-xs text-[#0e3833] font-medium block">Em Produção</span>
+          <span id="metric-producao" class="text-3xl font-semibold text-[#0e3833] font-mono mt-2 block tracking-tight">0</span>
+        </div>
+        <div class="flow-card bg-[#f8fafc] p-5 rounded-2xl border border-[#dfd7be] shadow-sm relative overflow-hidden group">
+          <span class="text-xs text-[#5c3a21] font-medium block">Finalizados</span>
+          <span id="metric-finalizados" class="text-3xl font-semibold text-[#141414] font-mono mt-2 block tracking-tight">0</span>
+        </div>
+      </div>
+
+      <!-- Filters & Search Bar -->
+      <div class="flow-card bg-white rounded-2xl p-3 sm:p-4 border border-[#dfd7be] shadow-sm flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+        
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          <button data-filter-status="all" class="text-xs px-4 py-1.5 rounded-full bg-[#141414] text-[#f7f4ea] font-semibold shadow-sm transition shrink-0 cursor-pointer">
+            Todos
+          </button>
+          <button data-filter-status="Novo" class="text-xs px-4 py-1.5 rounded-full bg-white text-[#5c3a21] hover:text-[#141414] border border-[#dfd7be] transition shrink-0 cursor-pointer">
+            Novo
+          </button>
+          <button data-filter-status="Em análise" class="text-xs px-4 py-1.5 rounded-full bg-white text-[#5c3a21] hover:text-[#141414] border border-[#dfd7be] transition shrink-0 cursor-pointer">
+            Em análise
+          </button>
+          <button data-filter-status="Em produção" class="text-xs px-4 py-1.5 rounded-full bg-white text-[#5c3a21] hover:text-[#141414] border border-[#dfd7be] transition shrink-0 cursor-pointer">
+            Em produção
+          </button>
+          <button data-filter-status="Aguardando cliente" class="text-xs px-4 py-1.5 rounded-full bg-white text-[#5c3a21] hover:text-[#141414] border border-[#dfd7be] transition shrink-0 cursor-pointer">
+            Aguardando
+          </button>
+          <button data-filter-status="Finalizado" class="text-xs px-4 py-1.5 rounded-full bg-white text-[#5c3a21] hover:text-[#141414] border border-[#dfd7be] transition shrink-0 cursor-pointer">
+            Finalizado
+          </button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative min-w-[240px]">
+          <i data-lucide="search" class="w-4 h-4 text-[#8e7a68] absolute left-3.5 top-3"></i>
+          <input type="text" id="designer-search-input" placeholder="Buscar título ou autor..." 
+                 class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-full pl-10 pr-4 py-2 text-xs text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] transition" />
+        </div>
+
+      </div>
+
+      <!-- Cards Grid -->
+      <div id="designer-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered dynamically by designer.js -->
+      </div>
+
+    </div><!-- /#view-designer -->
+
+  </main>
+
+  <!-- =========================================================================
+       MODAL: BRIEFING DETAIL (Visualizador Completo para o Designer)
+       ========================================================================= -->
+  <div id="briefing-detail-modal" class="fixed inset-0 z-50 bg-[#141414]/60 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="flow-card bg-white rounded-3xl border border-[#dfd7be] max-w-3xl w-full my-8 max-h-[90vh] flex flex-col shadow-2xl overflow-hidden slide-up">
+      
+      <!-- Modal Header -->
+      <div class="p-6 sm:p-7 border-b border-[#dfd7be] flex items-start justify-between gap-4 bg-[#fbf9f2]">
+        <div>
+          <div class="flex items-center gap-2 text-xs font-mono text-[#5c3a21] mb-1.5">
+            <span id="modal-id" class="badge-flow text-[#0e3833] font-bold px-3 py-1 rounded-full border border-[#0e3833]/20"></span>
+            <span>•</span>
+            <span id="modal-date"></span>
+          </div>
+          <h3 id="modal-book-title" class="text-xl sm:text-2xl font-normal font-serif-title text-[#141414]"></h3>
+          <p id="modal-book-subtitle" class="text-xs sm:text-sm text-[#5c3a21] italic"></p>
+        </div>
+        
+        <button id="modal-btn-close" 
+                onclick="window.designerApp.closeDetailModal()"
+                class="p-2.5 rounded-full bg-white hover:bg-[#f4f4dc] text-[#5c3a21] hover:text-[#141414] transition cursor-pointer border border-[#dfd7be]">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-6 sm:p-7 overflow-y-auto space-y-6 flex-1 text-sm bg-white">
+        
+        <!-- Author & Status Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 rounded-2xl bg-[#fbf9f2] border border-[#dfd7be]">
+          <div>
+            <span class="text-xs uppercase tracking-wider text-[#5c3a21] font-semibold block mb-1">Autor</span>
+            <span id="modal-author" class="text-base font-semibold text-[#141414]"></span>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider text-[#5c3a21] font-semibold block mb-1">Gênero</span>
+            <span id="modal-genre" class="inline-block badge-flow text-[#0e3833] px-3 py-1 rounded-full text-xs font-medium"></span>
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider text-[#5c3a21] font-semibold block mb-1">Status do Projeto</span>
+            <select id="modal-status-select" class="w-full bg-white border border-[#dfd7be] rounded-xl px-3 py-2 text-xs text-[#141414] font-medium focus:outline-none focus:border-[#0e3833] transition">
+              <option value="Novo">Novo</option>
+              <option value="Em análise">Em análise</option>
+              <option value="Em produção">Em produção</option>
+              <option value="Aguardando cliente">Aguardando cliente</option>
+              <option value="Finalizado">Finalizado</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Contacts Box (if present) -->
+        <div id="modal-contacts-box" class="p-4 rounded-2xl bg-[#f4f4dc] border border-[#dfd7be] text-xs text-[#141414] flex items-center justify-between">
+          <div class="flex items-center gap-6">
+            <div><strong class="text-[#5c3a21] font-normal">WhatsApp:</strong> <span id="modal-contact-whatsapp" class="text-[#141414] font-medium"></span></div>
+            <div><strong class="text-[#5c3a21] font-normal">E-mail:</strong> <span id="modal-contact-email" class="text-[#141414] font-medium"></span></div>
+          </div>
+        </div>
+
+        <!-- Ideia Principal -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-[#0e3833] flex items-center gap-1.5">
+            <i data-lucide="lightbulb" class="w-4 h-4"></i> Como o autor imagina a capa:
+          </h4>
+          <p id="modal-idea" class="p-4 rounded-2xl bg-[#fbf9f2] border border-[#dfd7be] text-[#141414] leading-relaxed italic border-l-2 border-[#0e3833]"></p>
+        </div>
+
+        <!-- Referências Visuais (Imagens em tamanho maior) -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-[#0e3833] flex items-center gap-1.5">
+            <i data-lucide="image" class="w-4 h-4"></i> Imagens de Referência (Clique para ampliar):
+          </h4>
+          <div id="modal-images-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+        </div>
+
+        <!-- Estilo & Cores -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-[#5c3a21]">Estilos:</h4>
+            <div id="modal-styles-list" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-[#5c3a21]">Cores:</h4>
+            <div id="modal-colors-list" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+
+        <!-- Elemento Indispensável -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-[#5c3a21]">Elemento Indispensável:</h4>
+          <p id="modal-indispensable" class="p-4 rounded-2xl bg-[#fbf9f2] border border-[#dfd7be] text-[#141414]"></p>
+        </div>
+
+        <!-- Anotações Internas do Designer -->
+        <div class="space-y-2 pt-2 border-t border-[#dfd7be]">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-[#0e3833] flex items-center gap-1.5">
+              <i data-lucide="sticky-note" class="w-4 h-4"></i> Anotações Internas do Designer:
+            </h4>
+            <button id="modal-btn-save-notes" 
+                    onclick="window.designerApp.handleSaveNotes()"
+                    class="text-xs text-[#0e3833] hover:underline transition font-semibold cursor-pointer">
+              Salvar Anotação
+            </button>
+          </div>
+          <textarea id="modal-designer-notes" rows="3" placeholder="Insira referências de tipografia, composição, testes de software ou combinados com o autor..."
+                    class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-2xl p-3.5 text-xs text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] transition"></textarea>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer (Actions) -->
+      <div class="p-5 border-t border-[#dfd7be] bg-[#fbf9f2] flex flex-wrap items-center justify-between gap-3">
+        <button id="modal-btn-delete" 
+                onclick="window.designerApp.handleDeleteActiveBriefing()"
+                class="text-xs text-red-600 hover:text-red-700 flex items-center gap-1.5 px-3.5 py-2 rounded-full hover:bg-red-50 transition cursor-pointer">
+          <i data-lucide="trash-2" class="w-4 h-4"></i> Excluir
+        </button>
+
+        <div class="flex items-center gap-2.5">
+          <button id="modal-btn-copy-text" 
+                  onclick="window.designerApp.copyActiveBriefingText()"
+                  class="btn-flow-secondary text-xs px-4 py-2 flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copiar Resumo
+          </button>
+          
+          <button id="modal-btn-download-pdf" 
+                  onclick="window.designerApp.downloadActivePDF()"
+                  class="btn-flow text-xs px-5 py-2 font-semibold flex items-center gap-1.5 cursor-pointer shadow-md">
+            <i data-lucide="file-down" class="w-4 h-4"></i> Baixar briefing em PDF
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: IMAGE LIGHTBOX (Zoom de Alta Resolução)
+       ========================================================================= -->
+  <div id="image-lightbox" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-lg hidden items-center justify-center p-4">
+    <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
+      <button id="lightbox-btn-close" 
+              onclick="window.designerApp.closeImageLightbox()"
+              class="absolute -top-12 right-0 p-2.5 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition cursor-pointer">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+      <img id="lightbox-img" src="" alt="Imagem ampliada" class="max-h-[80vh] max-w-full object-contain rounded-2xl shadow-2xl border border-white/15" />
+      <p id="lightbox-caption" class="text-xs text-white mt-3 font-medium bg-black/70 px-5 py-2 rounded-full"></p>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       TOAST NOTIFICATION
+       ========================================================================= -->
+  <div id="app-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-[#141414] text-[#f7f4ea] border border-black/20 px-5 py-3 rounded-full shadow-2xl flex items-center gap-3">
+      <i data-lucide="info" class="w-4 h-4 text-[#d3ecd7] shrink-0"></i>
+      <span id="app-toast-msg" class="text-xs sm:text-sm font-medium"></span>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: DESIGNER LOGIN (Acesso Restrito)
+       ========================================================================= -->
+  <div id="designer-login-modal" class="fixed inset-0 z-50 bg-[#141414]/60 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="flow-card bg-white rounded-3xl border border-[#dfd7be] max-w-md w-full p-7 sm:p-9 shadow-2xl slide-up relative text-[#141414]">
+      
+      <!-- Close button -->
+      <button onclick="window.authService.closeLoginModal()" 
+              class="absolute top-5 right-5 p-2 text-[#5c3a21] hover:text-[#141414] rounded-full hover:bg-[#fbf9f2] transition cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Header -->
+      <div class="text-center mb-6">
+        <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-[#d3ecd7] text-[#0e3833] flex items-center justify-center border border-[#0e3833]/20 shadow-sm">
+          <i data-lucide="lock" class="w-7 h-7"></i>
+        </div>
+        <h3 class="text-2xl font-normal font-serif-title text-[#141414]">Área Restrita do Designer</h3>
+        <p class="text-xs text-[#5c3a21] mt-1.5">Apenas a designer responsável tem acesso aos briefings recebidos.</p>
+      </div>
+
+      <!-- Error Alert -->
+      <div id="login-error-msg" class="hidden mb-4 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+        <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 text-red-500"></i>
+        <span id="login-error-text">E-mail ou senha incorretos.</span>
+      </div>
+
+      <!-- Form -->
+      <form onsubmit="event.preventDefault(); window.authService.handleLoginFormSubmit();" class="space-y-4">
+        <div class="space-y-1.5">
+          <label for="login-email" class="block text-xs font-semibold text-[#5c3a21] uppercase tracking-wider">E-mail de Acesso</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 text-[#8e7a68] absolute left-3.5 top-3.5"></i>
+            <input type="email" id="login-email" required placeholder="lailapauladesigner@gmail.com"
+                   class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-2xl pl-10 pr-4 py-3 text-sm text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] focus:ring-1 focus:ring-[#0e3833] transition" />
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="login-password" class="block text-xs font-semibold text-[#5c3a21] uppercase tracking-wider">Senha</label>
+          <div class="relative">
+            <i data-lucide="key" class="w-4 h-4 text-[#8e7a68] absolute left-3.5 top-3.5"></i>
+            <input type="password" id="login-password" required placeholder="••••••••"
+                   class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-2xl pl-10 pr-4 py-3 text-sm text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] focus:ring-1 focus:ring-[#0e3833] transition" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs pt-1">
+          <label class="flex items-center gap-2 text-[#5c3a21] cursor-pointer select-none">
+            <input type="checkbox" id="login-remember" checked class="rounded bg-[#fbf9f2] border-[#dfd7be] text-[#0e3833] focus:ring-[#0e3833] focus:ring-offset-[#f7f4ea]" />
+            <span>Lembrar login neste navegador</span>
+          </label>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" class="btn-flow w-full py-3.5 text-sm font-semibold flex items-center justify-center gap-2 shadow-md cursor-pointer">
+            <i data-lucide="unlock" class="w-4 h-4"></i>
+            <span>Acessar Painel</span>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- App Scripts -->
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/state.js"></script>
+  <script src="assets/js/pdf-export.js"></script>
+  <script src="assets/js/designer.js"></script>
+  <script src="assets/js/app.js"></script>
+
+  <script>
+    async function startApplication() {
+      try {
+        if (window.lucide) window.lucide.createIcons();
+      } catch (e) {}
+
+      try {
+        if (window.briefingApp) await window.briefingApp.init();
+      } catch (err) {
+        console.error('Error initializing briefingApp:', err);
+      }
+
+      try {
+        if (window.authService) window.authService.updateUI();
+      } catch (e) {}
+
+      try {
+        if (window.designerApp) await window.designerApp.init();
+      } catch (err) {
+        console.error('Error initializing designerApp:', err);
+      }
+
+      try {
+        if (window.db) await window.db.init();
+      } catch (err) {
+        console.warn('DB init warning:', err);
+      }
+
+      try {
+        if (window.lucide) window.lucide.createIcons();
+      } catch (e) {}
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      startApplication();
+    } else {
+      document.addEventListener('DOMContentLoaded', startApplication);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,566 @@
+/* ==========================================================================
+   BRIEFING CAPISTA — Wispr Flow Design System (Authentic)
+   Reference: https://wisprflow.ai/ (Landingfolio)
+   Aesthetic: Quiet Luxury, Pergaminho Vintage (#eae3cb / #f7f4ea), Editorial Serif (EB Garamond),
+   Geometric Sans (Figtree), Preto Carvão (#141414), Verde Floresta (#0e3833), Marrom Couro (#5c3a21).
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Figtree:ital,wght@0,300..900;1,300..900&family=Oswald:wght@500;600;700&display=swap');
+
+:root {
+  --font-serif: 'EB Garamond', Georgia, serif;
+  --font-sans: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-condensed: 'Barlow Condensed', 'Oswald', -apple-system, sans-serif;
+  
+  /* Paleta Editorial: Verde Floresta + Pergaminho + Preto + Marrom */
+  --color-forest: #0e3833;         /* Verde Floresta Nobre (da imagem) */
+  --color-forest-light: #edf6f4;   /* Tint suave para seleção */
+  --color-parchment: #eae3cb;      /* Linho / Pergaminho Vintage (da imagem) */
+  --color-parchment-light: #f7f4ea;/* Fundo pergaminho suave */
+  
+  --color-black: #141414;          /* Preto Carvão / Tinta Nobre */
+  --color-brown: #5c3a21;          /* Marrom Couro / Tabaco Quente */
+  --color-brown-light: #f6eee7;    /* Tint suave marrom para badges */
+  --color-brown-hover: #482c18;    /* Marrom escuro para hovers */
+  
+  /* Backgrounds & Borders */
+  --bg-primary: #f7f4ea;           /* Fundo do site no pergaminho aconchegante */
+  --bg-secondary: #eae3cb;         /* Contraste pergaminho da imagem */
+  --bg-card: #ffffff;              /* Cards brancos limpos e nítidos */
+  --border-color: #dfd7be;         /* Bordas no tom do linho/pergaminho */
+  --border-focus: #0e3833;         /* Foco em verde floresta */
+  
+  /* Tipografia */
+  --text-primary: #141414;          /* Preto tinta pura */
+  --text-secondary: #5c3a21;        /* Marrom nobre para subtítulos */
+  --text-muted: #8e7a68;            /* Marrom suave para placeholders */
+  
+  --color-mint: #d3ecd7;           /* Verde suave / menta de suporte */
+  --color-dawn: #f6eee7;           /* Tint marrom claro */
+}
+
+/* Global Reset & Base */
+html {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  position: relative;
+}
+
+/* Artisanal Paper Texture Overlay (Subtle book paper feel) */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Background Wallpaper (Vintage Literary Sketches with reduced blur) */
+.site-bg-wallpaper {
+  position: fixed;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url('../images/bg-books.jpg');
+  background-repeat: repeat;
+  background-size: 500px 500px;
+  filter: blur(2px); /* Desfoque reduzido para os desenhos ficarem bem visíveis */
+  transform: scale(1.02);
+  opacity: 0.44;
+  will-change: transform, filter;
+}
+
+.site-bg-tint {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 30%, rgba(247, 244, 234, 0.35) 0%, rgba(234, 227, 203, 0.72) 100%);
+}
+
+/* Typography */
+.font-serif-title, .font-editorial {
+  font-family: var(--font-serif);
+  letter-spacing: -0.015em;
+}
+
+.font-serif-title em, .font-editorial em {
+  font-style: italic;
+  font-family: var(--font-serif);
+}
+
+.font-condensed {
+  font-family: var(--font-condensed);
+}
+
+/* Wispr Flow Floating Navbar — Elevated Frosted Glass Pill */
+.nav-wispr {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 250, 0.82) 0%,
+    rgba(234, 227, 203, 0.68) 100%
+  );
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 9999px;
+  box-shadow:
+    0 2px 4px rgba(20, 20, 20, 0.03),
+    0 10px 24px -4px rgba(20, 20, 20, 0.1),
+    0 24px 44px -8px rgba(92, 58, 33, 0.16),
+    0 0 0 1px rgba(223, 215, 190, 0.6),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
+}
+
+.nav-wispr:hover {
+  transform: translateY(-1.5px);
+  box-shadow:
+    0 4px 8px rgba(20, 20, 20, 0.04),
+    0 16px 32px -4px rgba(20, 20, 20, 0.14),
+    0 32px 56px -8px rgba(92, 58, 33, 0.22),
+    0 0 0 1px rgba(223, 215, 190, 0.7),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 1);
+}
+
+/* Wispr Flow Signature Cards */
+.glass-card, .flow-card {
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: 1.75rem; /* 28px */
+  box-shadow: 0 6px 24px -4px rgba(26, 26, 26, 0.04);
+}
+
+.flow-card-subtle {
+  background-color: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 1.5rem;
+}
+
+/* Wispr Flow Iconic Green Block */
+.flow-forest-card {
+  background-color: var(--color-forest);
+  color: var(--bg-primary);
+  border-radius: 2rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Wispr Flow Tag / Badge */
+.tag-wispr, .badge-flow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(234, 227, 203, 0.65);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.6875rem; /* 11px */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+}
+
+.badge-forest {
+  background-color: rgba(14, 56, 51, 0.1);
+  border: 1px solid rgba(14, 56, 51, 0.25);
+  color: var(--color-forest);
+  border-radius: 9999px;
+}
+
+.badge-brown {
+  background-color: rgba(92, 58, 33, 0.08);
+  border: 1px solid rgba(92, 58, 33, 0.22);
+  color: var(--color-brown);
+  border-radius: 9999px;
+}
+
+/* Wispr Flow Signature Buttons */
+.btn-gold, .btn-flow {
+  background-color: var(--color-black) !important;
+  color: var(--bg-primary) !important;
+  border: 1.5px solid var(--color-black) !important;
+  border-radius: 9999px !important;
+  padding: 0.85rem 1.85rem !important;
+  font-weight: 600 !important;
+  font-size: 0.9375rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  text-decoration: none !important;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  box-shadow: 0 4px 14px rgba(20, 20, 20, 0.16) !important;
+  cursor: pointer !important;
+}
+
+.btn-gold:hover, .btn-flow:hover {
+  background-color: #262626 !important;
+  border-color: #262626 !important;
+  transform: translateY(-1.5px) scale(0.995) !important;
+  box-shadow: 0 6px 20px rgba(20, 20, 20, 0.22) !important;
+}
+
+.btn-gold:active, .btn-flow:active {
+  transform: translateY(1px) scale(0.985) !important;
+}
+
+/* Secondary Button */
+.btn-flow-secondary {
+  background-color: #ffffff;
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 9999px;
+  padding: 0.85rem 1.6rem;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+}
+
+.btn-flow-secondary:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+/* Form Inputs & Controls */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background-color: #ffffff !important;
+  border: 1.5px solid var(--border-color) !important;
+  border-radius: 1rem !important;
+  color: var(--text-primary) !important;
+  padding: 0.85rem 1.15rem !important;
+  font-size: 0.9375rem !important;
+  transition: all 0.2s ease !important;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  background-color: #ffffff !important;
+  border-color: var(--color-black) !important;
+  box-shadow: 0 0 0 3px rgba(14, 56, 51, 0.12) !important;
+  outline: none !important;
+}
+
+/* Selectable Cards (Genre, Styles, Colors) */
+.selectable-card {
+  background-color: #ffffff !important;
+  border: 1.5px solid var(--border-color) !important;
+  border-radius: 1.25rem !important;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.selectable-card:hover {
+  border-color: rgba(92, 58, 33, 0.45) !important;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px -4px rgba(20, 20, 20, 0.06);
+}
+
+.selectable-card.selected {
+  border-color: var(--color-forest) !important;
+  background-color: var(--color-forest-light) !important;
+  box-shadow: 0 0 0 1px var(--color-forest), 0 8px 20px -4px rgba(14, 56, 51, 0.18) !important;
+}
+
+.selectable-card.selected .check-indicator {
+  opacity: 1 !important;
+  color: var(--color-forest) !important;
+  transform: scale(1) !important;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+/* Dropzone (Upload) */
+.dropzone {
+  border: 2px dashed var(--border-color) !important;
+  background-color: #fbf9f2 !important;
+  border-radius: 1.5rem !important;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dropzone:hover {
+  border-color: var(--color-forest) !important;
+  background-color: var(--color-forest-light) !important;
+}
+
+.dropzone.dragover {
+  border-color: var(--color-forest) !important;
+  background-color: #dcebe8 !important;
+  transform: scale(1.01);
+}
+
+/* Smooth Progress Bar */
+#stepper-progress-bar {
+  background-color: var(--text-primary) !important;
+  border-radius: 9999px;
+  transition: width 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Custom transitions and animations */
+.fade-in {
+  animation: flowFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.slide-up {
+  animation: flowSlideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ==========================================================================
+   INTERACTIVE & EDITORIAL ANIMATIONS (Suave & Refinado)
+   1. Book Page Turn Transition (Soft 3D Perspective)
+   2. Kinetic Title Reveal (Delicate Rise & Ambient Shimmer)
+   3. CTA Start Briefing Button (Subtle Sheen & Poised State)
+   ========================================================================== */
+
+/* 1. Book Page Turn Container & Perspective */
+#view-client {
+  perspective: 2000px;
+  transform-style: preserve-3d;
+}
+
+.page-turn-next {
+  animation: bookPageTurnNext 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.page-turn-prev {
+  animation: bookPageTurnPrev 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: right center;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@keyframes bookPageTurnNext {
+  0% {
+    opacity: 0;
+    transform: rotateY(5deg) translateX(20px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateY(0deg) translateX(0) scale(1);
+  }
+}
+
+@keyframes bookPageTurnPrev {
+  0% {
+    opacity: 0;
+    transform: rotateY(-5deg) translateX(-20px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateY(0deg) translateX(0) scale(1);
+  }
+}
+
+/* 2. Kinetic Title Reveal Animation */
+.title-animated {
+  display: block;
+}
+
+.title-line-1,
+.title-line-2 {
+  display: block;
+  overflow: hidden;
+}
+
+.title-line-1 {
+  animation: titleRevealUp 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.title-line-2 {
+  animation: titleRevealUp 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both, titleShimmer 10s ease-in-out infinite 1.4s;
+  background: linear-gradient(125deg, #141414 0%, #0e3833 42%, #5c3a21 72%, #141414 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle-animated {
+  animation: subtitleFadeUp 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both;
+}
+
+@keyframes titleRevealUp {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes titleShimmer {
+  0%, 75% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes subtitleFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 3. CTA Button (Realizar Briefing) */
+.btn-start-animated {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(20, 20, 20, 0.16), 0 0 0 0 rgba(14, 56, 51, 0.25) !important;
+  animation: btnGlowPulse 5.4s ease-in-out infinite;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.btn-start-animated::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(234, 227, 203, 0.18) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  animation: btnSheenSweep 6.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.btn-start-animated i,
+.btn-start-animated svg {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-start-animated:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 8px 24px rgba(20, 20, 20, 0.24), 0 0 0 4px rgba(14, 56, 51, 0.16) !important;
+}
+
+.btn-start-animated:hover i,
+.btn-start-animated:hover svg {
+  transform: translateX(4px) scale(1.12);
+}
+
+@keyframes btnSheenSweep {
+  0%, 45% {
+    left: -120%;
+  }
+  75%, 100% {
+    left: 150%;
+  }
+}
+
+@keyframes btnGlowPulse {
+  0%, 100% {
+    box-shadow: 0 4px 18px rgba(20, 20, 20, 0.16), 0 0 0 0 rgba(14, 56, 51, 0.2);
+  }
+  50% {
+    box-shadow: 0 6px 22px rgba(20, 20, 20, 0.22), 0 0 0 6px rgba(14, 56, 51, 0);
+  }
+}
+
+@keyframes flowFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes flowSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dfd7be;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c9c0a3;
+}
+
+/* Print/PDF specific optimizations */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .glass-card, .flow-card {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+  }
+}
