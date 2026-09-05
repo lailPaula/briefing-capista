@@ -67,14 +67,21 @@
       <nav class="flex items-center gap-1 bg-[#dfd7be]/45 p-1 rounded-full border border-[#dfd7be]/60 shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
         <button id="nav-btn-client" 
                 onclick="window.briefingApp.switchView('client'); window.briefingApp.goToStep(0)"
-                class="text-xs sm:text-sm px-4 py-1.5 rounded-full transition-all bg-white text-[#141414] shadow-md shadow-[#141414]/5 font-semibold flex items-center gap-1.5 cursor-pointer">
+                class="text-xs sm:text-sm px-3.5 sm:px-4 py-1.5 rounded-full transition-all bg-white text-[#141414] shadow-md shadow-[#141414]/5 font-semibold flex items-center gap-1.5 cursor-pointer">
           <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-[#0e3833]"></i>
-          <span>Criar Briefing</span>
+          <span>Briefing</span>
+        </button>
+
+        <button id="nav-btn-process" 
+                onclick="window.briefingApp.switchView('client'); window.briefingApp.goToStep('process')"
+                class="text-xs sm:text-sm px-3 sm:px-3.5 py-1.5 rounded-full transition-all text-[#5c3a21] hover:text-[#141414] flex items-center gap-1.5 hover:bg-white/60 relative cursor-pointer font-medium">
+          <i data-lucide="route" class="w-3.5 h-3.5 text-[#0e3833]"></i>
+          <span>Como Funciona</span>
         </button>
 
         <button id="nav-btn-designer" 
                 onclick="window.briefingApp.switchView('designer')"
-                class="text-xs sm:text-sm px-4 py-1.5 rounded-full transition-all text-[#5c3a21] hover:text-[#141414] flex items-center gap-1.5 hover:bg-white/60 relative cursor-pointer font-medium">
+                class="text-xs sm:text-sm px-3.5 sm:px-4 py-1.5 rounded-full transition-all text-[#5c3a21] hover:text-[#141414] flex items-center gap-1.5 hover:bg-white/60 relative cursor-pointer font-medium">
           <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
           <span>Área do Designer</span>
           <span id="nav-badge-count" class="hidden sm:inline-flex text-[10px] bg-[#0e3833]/10 text-[#0e3833] border border-[#0e3833]/20 px-1.5 py-0.2 rounded-full font-mono font-semibold">
@@ -148,12 +155,18 @@
         </div>
 
         <!-- Big CTA Button — Animated Wispr Flow Pill Button -->
-        <div class="pt-4">
+        <div class="pt-4 flex flex-col items-center gap-3">
           <button id="btn-start-briefing" 
-                  onclick="window.briefingApp.goToStep(1)"
+                  onclick="window.briefingApp.goToStep('process')"
                   class="btn-flow btn-start-animated px-10 py-4 rounded-full text-base font-semibold inline-flex items-center gap-3 cursor-pointer">
             <span>COMEÇAR BRIEFING</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+
+          <button type="button" 
+                  onclick="window.briefingApp.goToStep(1)" 
+                  class="text-xs sm:text-sm text-[#5c3a21] hover:text-[#141414] underline underline-offset-4 decoration-[#dfd7be] hover:decoration-[#141414] transition cursor-pointer font-medium mt-1">
+            Já conhece o processo? Pular direto para o formulário →
           </button>
         </div>
 
@@ -164,14 +177,335 @@
       </section>
 
       <!-- =====================================================================
+           PROCESS GUIDE: DO BRIEFING À CAPA PERFEITA
+           ===================================================================== -->
+      <section id="step-section-process" class="hidden space-y-8 sm:space-y-10 fade-in">
+        
+        <!-- Top Bar Navigation Controls -->
+        <div class="flex items-center justify-between gap-3 pb-3 border-b border-[#dfd7be]/60">
+          <button type="button" 
+                  onclick="window.briefingApp.goToStep(0)" 
+                  class="btn-flow-secondary text-xs sm:text-sm px-4 py-2 rounded-full flex items-center gap-2 cursor-pointer transition hover:border-[#141414]">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Início</span>
+          </button>
+
+          <button type="button" 
+                  onclick="window.briefingApp.goToStep(1)" 
+                  class="btn-flow text-xs sm:text-sm px-5 py-2 rounded-full font-semibold flex items-center gap-2 cursor-pointer shadow-sm">
+            <span>Pular para o briefing</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <!-- Title & Editorial Intro -->
+        <div class="text-center max-w-2xl mx-auto space-y-3 pt-1">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full tag-wispr">
+            <i data-lucide="compass" class="w-3.5 h-3.5 text-[#0e3833]"></i>
+            <span>Fluxo de Criação Editorial</span>
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-serif-title font-bold text-[#141414] tracking-tight leading-tight">
+            Do briefing à capa perfeita!
+          </h2>
+          <p class="text-sm sm:text-base text-[#5c3a21] leading-relaxed">
+            Da sua ideia à capa final com total clareza, transparência e em conformidade com o contrato. Conheça as etapas do nosso ateliê antes de preencher:
+          </p>
+        </div>
+
+        <!-- 6 Process Steps Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+
+          <!-- Etapa 1 -->
+          <div class="glass-card p-5 sm:p-6 rounded-2xl flex flex-col justify-between space-y-4 border border-[#dfd7be] bg-white hover:border-[#0e3833]/40 transition-all shadow-sm hover:shadow-md">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded-full bg-[#0e3833] text-[#f7f4ea] font-mono font-bold text-sm flex items-center justify-center shadow-xs">
+                  1
+                </span>
+                <span class="w-8 h-8 rounded-full bg-[#edf6f4] text-[#0e3833] flex items-center justify-center">
+                  <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <h3 class="font-serif-title text-lg sm:text-xl font-bold text-[#141414] leading-snug">
+                Preenchimento do briefing pelo autor
+              </h3>
+              <ul class="text-xs sm:text-sm text-[#5c3a21] space-y-2 leading-relaxed">
+                <li class="flex items-start gap-2">
+                  <span class="text-[#0e3833] font-bold mt-0.5">•</span>
+                  <span>O autor preenche o briefing com as informações essenciais sobre a obra.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="text-[#0e3833] font-bold mt-0.5">•</span>
+                  <span>Fornece referências visuais, estilo e atmosfera (incluindo imagens de IA quando aplicável).</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-[#0e3833]/10 text-[#0e3833] border border-[#0e3833]/20">
+                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                <span>Base para a criação da proposta</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Etapa 2 -->
+          <div class="glass-card p-5 sm:p-6 rounded-2xl flex flex-col justify-between space-y-4 border border-[#dfd7be] bg-white hover:border-[#0e3833]/40 transition-all shadow-sm hover:shadow-md">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded-full bg-[#0e3833] text-[#f7f4ea] font-mono font-bold text-sm flex items-center justify-center shadow-xs">
+                  2
+                </span>
+                <span class="w-8 h-8 rounded-full bg-[#edf6f4] text-[#0e3833] flex items-center justify-center">
+                  <i data-lucide="palette" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <h3 class="font-serif-title text-lg sm:text-xl font-bold text-[#141414] leading-snug">
+                Criação da capa <span class="font-normal text-sm text-[#5c3a21] block sm:inline">(até 5 dias)</span>
+              </h3>
+              <ul class="text-xs sm:text-sm text-[#5c3a21] space-y-2 leading-relaxed">
+                <li class="flex items-start gap-2">
+                  <span class="text-[#0e3833] font-bold mt-0.5">•</span>
+                  <span>A contratada desenvolve 1 (uma) proposta inicial exclusiva de capa com base no briefing e nas referências fornecidas.</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-[#0e3833]/10 text-[#0e3833] border border-[#0e3833]/20">
+                <i data-lucide="clock" class="w-3 h-3"></i>
+                <span>Prazo estimado: 5 dias úteis</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Etapa 3 -->
+          <div class="glass-card p-5 sm:p-6 rounded-2xl flex flex-col justify-between space-y-4 border border-[#dfd7be] bg-white hover:border-[#0e3833]/40 transition-all shadow-sm hover:shadow-md">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded-full bg-[#0e3833] text-[#f7f4ea] font-mono font-bold text-sm flex items-center justify-center shadow-xs">
+                  3
+                </span>
+                <span class="w-8 h-8 rounded-full bg-[#edf6f4] text-[#0e3833] flex items-center justify-center">
+                  <i data-lucide="send" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <h3 class="font-serif-title text-lg sm:text-xl font-bold text-[#141414] leading-snug">
+                Envio da capa para aprovação do autor
+              </h3>
+              <ul class="text-xs sm:text-sm text-[#5c3a21] space-y-2 leading-relaxed">
+                <li class="flex items-start gap-2">
+                  <span class="text-[#0e3833] font-bold mt-0.5">•</span>
+                  <span>A proposta inicial é enviada ao autor (contratante) para avaliação de conceito, tipografia e composição.</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-[#0e3833]/10 text-[#0e3833] border border-[#0e3833]/20">
+                <i data-lucide="eye" class="w-3 h-3"></i>
+                <span>Você recebe 1 proposta inicial de capa</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Etapa 4 -->
+          <div class="glass-card p-5 sm:p-6 rounded-2xl flex flex-col justify-between space-y-4 border border-[#dfd7be] bg-white hover:border-[#5c3a21]/40 transition-all shadow-sm hover:shadow-md">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded-full bg-[#5c3a21] text-[#f7f4ea] font-mono font-bold text-sm flex items-center justify-center shadow-xs">
+                  4
+                </span>
+                <span class="w-8 h-8 rounded-full bg-[#f6eee7] text-[#5c3a21] flex items-center justify-center">
+                  <i data-lucide="message-square" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <h3 class="font-serif-title text-lg sm:text-xl font-bold text-[#141414] leading-snug">
+                Primeira rodada de alterações <span class="font-normal text-sm text-[#5c3a21] block sm:inline">(se necessário)</span>
+              </h3>
+              <ul class="text-xs sm:text-sm text-[#5c3a21] space-y-2 leading-relaxed">
+                <li class="flex items-start gap-2">
+                  <span class="text-[#5c3a21] font-bold mt-0.5">•</span>
+                  <span>Você pode solicitar ajustes pontuais na proposta apresentada.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="text-[#5c3a21] font-bold mt-0.5">•</span>
+                  <span>A solicitação deve ser enviada como um conjunto consolidado de alterações.</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-[#5c3a21]/10 text-[#5c3a21] border border-[#5c3a21]/20">
+                <i data-lucide="check-circle" class="w-3 h-3"></i>
+                <span>1ª rodada de alterações (incluída no contrato)</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Etapa 5 -->
+          <div class="glass-card p-5 sm:p-6 rounded-2xl flex flex-col justify-between space-y-4 border border-[#dfd7be] bg-white hover:border-[#5c3a21]/40 transition-all shadow-sm hover:shadow-md">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded-full bg-[#5c3a21] text-[#f7f4ea] font-mono font-bold text-sm flex items-center justify-center shadow-xs">
+                  5
+                </span>
+                <span class="w-8 h-8 rounded-full bg-[#f6eee7] text-[#5c3a21] flex items-center justify-center">
+                  <i data-lucide="sliders" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <h3 class="font-serif-title text-lg sm:text-xl font-bold text-[#141414] leading-snug">
+                Segunda rodada de alterações <span class="font-normal text-sm text-[#5c3a21] block sm:inline">(se necessário)</span>
+              </h3>
+              <ul class="text-xs sm:text-sm text-[#5c3a21] space-y-2 leading-relaxed">
+                <li class="flex items-start gap-2">
+                  <span class="text-[#5c3a21] font-bold mt-0.5">•</span>
+                  <span>Caso ainda sejam necessários refinamentos, você pode solicitar novos ajustes.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="text-[#5c3a21] font-bold mt-0.5">•</span>
+                  <span>Também deve ser um conjunto consolidado e final de alterações.</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-[#5c3a21]/10 text-[#5c3a21] border border-[#5c3a21]/20">
+                <i data-lucide="check-circle" class="w-3 h-3"></i>
+                <span>2ª (e última) rodada incluída no contrato</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Etapa 6 -->
+          <div class="glass-card p-5 sm:p-6 rounded-2xl flex flex-col justify-between space-y-4 border border-[#0e3833]/30 bg-[#fdfefc] hover:border-[#0e3833] transition-all shadow-sm hover:shadow-md">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-8 h-8 rounded-full bg-[#0e3833] text-[#f7f4ea] font-mono font-bold text-sm flex items-center justify-center shadow-xs">
+                  6
+                </span>
+                <span class="w-8 h-8 rounded-full bg-[#d3ecd7] text-[#0e3833] flex items-center justify-center">
+                  <i data-lucide="check-check" class="w-4 h-4"></i>
+                </span>
+              </div>
+              <h3 class="font-serif-title text-lg sm:text-xl font-bold text-[#141414] leading-snug">
+                Aprovação final
+              </h3>
+              <ul class="text-xs sm:text-sm text-[#5c3a21] space-y-2 leading-relaxed">
+                <li class="flex items-start gap-2">
+                  <span class="text-[#0e3833] font-bold mt-0.5">•</span>
+                  <span>Após as alterações (ou se estiver satisfeito desde o início), você aprova a capa final.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="text-[#0e3833] font-bold mt-0.5">•</span>
+                  <span>Caso tenham sido apresentadas 3 opções de capa, você define qual será a escolhida para entrega dos arquivos.</span>
+                </li>
+              </ul>
+            </div>
+            <div class="pt-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#d3ecd7] text-[#0e3833] border border-[#0e3833]/25">
+                <i data-lucide="check" class="w-3 h-3"></i>
+                <span>Capa final aprovada e pronta para uso!</span>
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Contractual Notes & Rules (from Infographic Footer) -->
+        <div class="glass-card p-6 sm:p-8 rounded-2xl border border-[#dfd7be] bg-[#fbf9f4] space-y-6">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-[#0e3833]/10 text-[#0e3833] flex items-center justify-center font-bold">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h3 class="font-serif-title text-lg sm:text-xl font-bold text-[#141414]">
+                Observações importantes (conforme o contrato)
+              </h3>
+              <p class="text-xs sm:text-sm text-[#5c3a21]">Diretrizes essenciais para garantir agilidade e respeito ao seu projeto</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-1">
+            
+            <!-- § 1º e § 2º -->
+            <div class="p-4 sm:p-5 rounded-xl bg-white border border-[#dfd7be] space-y-3">
+              <div class="flex items-center gap-2 text-xs font-bold text-[#0e3833] uppercase tracking-wider">
+                <i data-lucide="info" class="w-4 h-4"></i>
+                <span>§ 1º e § 2º — Rodadas de Alteração</span>
+              </div>
+              <p class="text-xs sm:text-sm text-[#5c3a21] leading-relaxed">
+                Estão incluídas <strong>até 2 (duas) rodadas de alterações</strong> sobre a proposta apresentada.
+              </p>
+              <p class="text-xs sm:text-sm text-[#5c3a21] leading-relaxed">
+                Cada rodada corresponderá a um <strong>conjunto consolidado de solicitações</strong> encaminhadas pelo autor. O envio fracionado de pedidos não obriga a designer a realizar sucessivas intervenções, podendo ser solicitada a consolidação das alterações antes de sua execução.
+              </p>
+            </div>
+
+            <!-- § 3º Atenção -->
+            <div class="p-4 sm:p-5 rounded-xl bg-white border border-[#dfd7be] space-y-3">
+              <div class="flex items-center gap-2 text-xs font-bold text-[#5c3a21] uppercase tracking-wider">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-amber-700"></i>
+                <span>§ 3º — Atenção a Mudanças Substanciais</span>
+              </div>
+              <p class="text-xs sm:text-sm text-[#5c3a21] leading-relaxed">
+                Solicitações posteriores às duas rodadas incluídas, mudança substancial do briefing anteriormente aprovado, substituição integral do conceito ou desenvolvimento de proposta visual substancialmente distinta poderão ser objeto de <strong>novo orçamento e ajuste de prazo</strong>.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Bottom inspirational note from image -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-[#dfd7be]/60 text-center sm:text-left">
+            <div class="flex items-center gap-3">
+              <span class="w-7 h-7 rounded-full bg-[#d3ecd7] text-[#0e3833] flex items-center justify-center shrink-0">
+                <i data-lucide="heart" class="w-3.5 h-3.5 fill-[#0e3833]/30"></i>
+              </span>
+              <p class="text-xs sm:text-sm text-[#141414] font-medium">
+                Com tudo certo, sua capa estará pronta para conquistar leitores! <span class="font-serif italic text-[#5c3a21]">Boa história merece uma grande capa!</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[#dfd7be]">
+          <button type="button" 
+                  onclick="window.briefingApp.goToStep(0)" 
+                  class="btn-flow-secondary w-full sm:w-auto px-6 py-3 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Voltar ao início</span>
+          </button>
+
+          <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <button type="button" 
+                    onclick="window.briefingApp.goToStep(1)" 
+                    class="w-full sm:w-auto text-xs sm:text-sm text-[#5c3a21] hover:text-[#141414] px-3 py-2 text-center transition cursor-pointer font-medium">
+              Pular direto
+            </button>
+            <button type="button" 
+                    onclick="window.briefingApp.goToStep(1)" 
+                    class="btn-flow w-full sm:w-auto px-8 py-3.5 text-sm sm:text-base font-semibold flex items-center justify-center gap-2.5 cursor-pointer shadow-lg hover:shadow-xl">
+              <span>Entendi o processo, iniciar briefing</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- =====================================================================
            STEP 1: INFORMAÇÕES DO LIVRO
            ===================================================================== -->
       <section id="step-section-1" class="hidden space-y-6 fade-in">
         
         <div class="space-y-2">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full tag-wispr">
-            <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#0e3833]"></i>
-            <span>Etapa 1</span>
+          <div class="flex items-center justify-between">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full tag-wispr">
+              <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#0e3833]"></i>
+              <span>Etapa 1 de 7</span>
+            </div>
+            <button type="button" 
+                    onclick="window.briefingApp.goToStep('process')" 
+                    class="text-xs text-[#5c3a21] hover:text-[#141414] underline underline-offset-4 decoration-[#dfd7be] hover:decoration-[#141414] transition cursor-pointer flex items-center gap-1.5 font-medium">
+              <i data-lucide="route" class="w-3.5 h-3.5 text-[#0e3833]"></i>
+              <span>Como funciona o processo?</span>
+            </button>
           </div>
           <h2 class="text-2xl sm:text-4xl font-normal font-serif-title text-[#141414]">
             Informações da Obra

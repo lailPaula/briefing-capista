@@ -105,22 +105,40 @@ class BriefingApp {
     const clientView = document.getElementById('view-client');
     const designerView = document.getElementById('view-designer');
     const navClientBtn = document.getElementById('nav-btn-client');
+    const navProcessBtn = document.getElementById('nav-btn-process');
     const navDesignerBtn = document.getElementById('nav-btn-designer');
 
     if (viewName === 'designer') {
       clientView.classList.add('hidden');
       designerView.classList.remove('hidden');
-      if (navClientBtn) navClientBtn.classList.remove('text-amber-400', 'font-semibold');
+      if (navClientBtn) navClientBtn.classList.remove('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+      if (navProcessBtn) navProcessBtn.classList.remove('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
       if (navDesignerBtn) {
-        navDesignerBtn.classList.add('text-amber-400', 'font-semibold');
+        navDesignerBtn.classList.add('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+        navDesignerBtn.classList.remove('text-[#5c3a21]');
       }
       if (window.authService) window.authService.updateUI();
       window.designerApp.loadBriefings();
     } else {
       designerView.classList.add('hidden');
       clientView.classList.remove('hidden');
-      if (navDesignerBtn) navDesignerBtn.classList.remove('text-amber-400', 'font-semibold');
-      if (navClientBtn) navClientBtn.classList.add('text-amber-400', 'font-semibold');
+      if (navDesignerBtn) {
+        navDesignerBtn.classList.remove('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+        navDesignerBtn.classList.add('text-[#5c3a21]');
+      }
+      if (this.state.currentStep === 'process') {
+        if (navClientBtn) navClientBtn.classList.remove('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+        if (navProcessBtn) {
+          navProcessBtn.classList.add('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+          navProcessBtn.classList.remove('text-[#5c3a21]');
+        }
+      } else {
+        if (navProcessBtn) {
+          navProcessBtn.classList.remove('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+          navProcessBtn.classList.add('text-[#5c3a21]');
+        }
+        if (navClientBtn) navClientBtn.classList.add('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+      }
     }
   }
 
@@ -130,7 +148,7 @@ class BriefingApp {
     }
 
     const previousStep = this.state.currentStep;
-    const isBack = stepNumber < previousStep;
+    const isBack = stepNumber === 0 || (typeof stepNumber === 'number' && typeof previousStep === 'number' && stepNumber < previousStep);
     const isFirstLoad = previousStep === 0 && stepNumber === 0;
     const animationClass = isFirstLoad ? 'fade-in' : (isBack ? 'page-turn-prev' : 'page-turn-next');
 
@@ -143,16 +161,43 @@ class BriefingApp {
       }
     }
 
+    // Hide process section
+    const processEl = document.getElementById('step-section-process');
+    if (processEl) {
+      processEl.classList.add('hidden');
+      processEl.classList.remove('page-turn-next', 'page-turn-prev', 'fade-in');
+    }
+
     // Show target step
-    const targetEl = document.getElementById(`step-section-${stepNumber}`);
+    const targetId = stepNumber === 'process' ? 'step-section-process' : `step-section-${stepNumber}`;
+    const targetEl = document.getElementById(targetId);
     if (targetEl) {
       targetEl.classList.remove('hidden');
       void targetEl.offsetWidth; // trigger reflow
       targetEl.classList.add(animationClass);
     }
 
+    // Update navbar active state
+    const navClientBtn = document.getElementById('nav-btn-client');
+    const navProcessBtn = document.getElementById('nav-btn-process');
+    if (stepNumber === 'process') {
+      if (navClientBtn) navClientBtn.classList.remove('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+      if (navProcessBtn) {
+        navProcessBtn.classList.add('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+        navProcessBtn.classList.remove('text-[#5c3a21]');
+      }
+    } else {
+      if (navProcessBtn) {
+        navProcessBtn.classList.remove('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+        navProcessBtn.classList.add('text-[#5c3a21]');
+      }
+      if (navClientBtn) navClientBtn.classList.add('bg-white', 'text-[#141414]', 'shadow-md', 'font-semibold');
+    }
+
     this.state.currentStep = stepNumber;
-    this.state.saveDraft();
+    if (typeof stepNumber === 'number') {
+      this.state.saveDraft();
+    }
     this.updateProgress();
 
     // If entering summary step (7), build the summary preview
@@ -185,7 +230,7 @@ class BriefingApp {
     if (current > 1) {
       this.goToStep(current - 1);
     } else if (current === 1) {
-      this.goToStep(0);
+      this.goToStep('process');
     }
   }
 
@@ -196,7 +241,7 @@ class BriefingApp {
     const stepIndicator = document.getElementById('stepper-step-indicator');
     const stepName = document.getElementById('stepper-step-name');
 
-    if (step === 0 || step === 8) {
+    if (step === 0 || step === 8 || step === 'process') {
       if (progressWrapper) progressWrapper.classList.add('hidden');
       return;
     }
@@ -765,13 +810,15 @@ class BriefingApp {
   bindGlobalEvents() {
     // Top Nav buttons
     const btnNavClient = document.getElementById('nav-btn-client');
+    const btnNavProcess = document.getElementById('nav-btn-process');
     const btnNavDesigner = document.getElementById('nav-btn-designer');
-    if (btnNavClient) btnNavClient.addEventListener('click', () => this.switchView('client'));
+    if (btnNavClient) btnNavClient.addEventListener('click', () => { this.switchView('client'); this.goToStep(0); });
+    if (btnNavProcess) btnNavProcess.addEventListener('click', () => { this.switchView('client'); this.goToStep('process'); });
     if (btnNavDesigner) btnNavDesigner.addEventListener('click', () => this.switchView('designer'));
 
     // Welcome screen start button
     const btnStart = document.getElementById('btn-start-briefing');
-    if (btnStart) btnStart.addEventListener('click', () => this.goToStep(1));
+    if (btnStart) btnStart.addEventListener('click', () => this.goToStep('process'));
 
     // Draft resume buttons
     const btnResume = document.getElementById('btn-resume-draft');
