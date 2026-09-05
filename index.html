@@ -1179,10 +1179,10 @@
         </div>
 
         <!-- Search Input -->
-        <div class="relative min-w-[240px]">
-          <i data-lucide="search" class="w-4 h-4 text-[#8e7a68] absolute left-3.5 top-3"></i>
+        <div class="relative flex items-center min-w-[240px]">
+          <i data-lucide="search" class="w-4 h-4 text-[#8e7a68] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
           <input type="text" id="designer-search-input" placeholder="Buscar título ou autor..." 
-                 class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-full pl-10 pr-4 py-2 text-xs text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] transition" />
+                 class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-full pl-11 pr-4 py-2 text-xs text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] transition" />
         </div>
 
       </div>
@@ -1389,19 +1389,19 @@
       <form onsubmit="event.preventDefault(); window.authService.handleLoginFormSubmit();" class="space-y-4">
         <div class="space-y-1.5">
           <label for="login-email" class="block text-xs font-semibold text-[#5c3a21] uppercase tracking-wider">E-mail de Acesso</label>
-          <div class="relative">
-            <i data-lucide="mail" class="w-4 h-4 text-[#8e7a68] absolute left-3.5 top-3.5"></i>
-            <input type="email" id="login-email" required placeholder="lailapauladesigner@gmail.com"
-                   class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-2xl pl-10 pr-4 py-3 text-sm text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] focus:ring-1 focus:ring-[#0e3833] transition" />
+          <div class="relative flex items-center">
+            <i data-lucide="mail" class="w-4 h-4 text-[#8e7a68] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input type="email" id="login-email" required autocomplete="username" placeholder="seuemail@exemplo.com"
+                   class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-2xl pl-11 pr-4 py-3 text-sm text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] focus:ring-1 focus:ring-[#0e3833] transition" />
           </div>
         </div>
 
         <div class="space-y-1.5">
           <label for="login-password" class="block text-xs font-semibold text-[#5c3a21] uppercase tracking-wider">Senha</label>
-          <div class="relative">
-            <i data-lucide="key" class="w-4 h-4 text-[#8e7a68] absolute left-3.5 top-3.5"></i>
-            <input type="password" id="login-password" required placeholder="••••••••"
-                   class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-2xl pl-10 pr-4 py-3 text-sm text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] focus:ring-1 focus:ring-[#0e3833] transition" />
+          <div class="relative flex items-center">
+            <i data-lucide="key" class="w-4 h-4 text-[#8e7a68] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input type="password" id="login-password" required autocomplete="current-password" placeholder="Digite sua senha"
+                   class="w-full bg-[#fbf9f2] border border-[#dfd7be] rounded-2xl pl-11 pr-4 py-3 text-sm text-[#141414] placeholder-[#8e7a68] focus:outline-none focus:border-[#0e3833] focus:ring-1 focus:ring-[#0e3833] transition" />
           </div>
         </div>
 

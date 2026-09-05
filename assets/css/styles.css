@@ -258,9 +258,19 @@ select {
   border: 1.5px solid var(--border-color) !important;
   border-radius: 1rem !important;
   color: var(--text-primary) !important;
-  padding: 0.85rem 1.15rem !important;
+  padding: 0.85rem 1.15rem;
   font-size: 0.9375rem !important;
   transition: all 0.2s ease !important;
+}
+
+/* Inputs with Left Icons — Ensure icon never overlaps text */
+input.pl-10,
+input.pl-11,
+.relative > input[type="email"],
+.relative > input[type="password"],
+.relative > input[type="text"].pl-10,
+.input-with-icon {
+  padding-left: 2.85rem !important;
 }
 
 input[type="text"]::placeholder,
